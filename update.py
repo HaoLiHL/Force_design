@@ -1428,7 +1428,10 @@ class GDMLTrain(object):
         record=[]
         kk=1
         cost_SAE=1000
-        while kk<300 and cost_SAE>0.3:
+        
+        R_design= []
+        
+        while kk<30 and cost_SAE>0.3:
             kk+=1
 
             R_desc_val_atom, R_d_desc_val_atom = desc.from_R(R_val_atom,lat_and_inv=lat_and_inv,
@@ -1555,6 +1558,7 @@ class GDMLTrain(object):
             #     lr=1e-18
             R_val_atom_last=R_val_atom[0,:,:].copy()
             R_val_atom[0,:,:]= R_val_atom[0,:,:] - drl.reshape(n_atoms,3)*lr
+            R_design.append(R_val_atom[0,:,:])
             #print(drl.reshape(n_atoms,3)*lr)
             #print(R_val_atom[0,:,:])
         
@@ -1563,7 +1567,7 @@ class GDMLTrain(object):
 
         #MAE=ae
 
-        return R_val_atom_last,F_hat,record,cost_SAE
+        return np.array(R_design),R_val_atom_last,F_hat,record,cost_SAE
 
     def _delta(
             self, 
@@ -2369,7 +2373,7 @@ class GDMLTrain(object):
 #dataset=np.load('benzene_old_dft.npz')
 #dataset=np.load('data_h2co.npz')
 #dataset=np.load('h2co_ccsdt.npz')
-dataset=np.load('H2CO_mu.npz')
+#dataset=np.load('H2CO_mu.npz')
 #dataset=np.load('uracil_dft.npz')
 #dataset=np.load('uracil_dft_mu.npz')
 #dataset=np.load('malonaldehyde_ccsd_t-train.npz')
@@ -2381,27 +2385,27 @@ dataset=np.load('H2CO_mu.npz')
 gdml_train=GDMLTrain()
 #n_train=np.array([100])
 #n_train=np.array([200,400,600,800,1000,1200,1400,1600])
-n_train=np.array([100])
+#n_train=np.array([100])
 
 
-task=gdml_train.create_task(dataset,n_train,dataset,200,500,100,1e-12,use_E_cstr=False,batch_size=10,uncertainty=False)
+# task=gdml_train.create_task(dataset,n_train,dataset,200,500,100,1e-12,use_E_cstr=False,batch_size=10,uncertainty=False)
 
-sig_opt,sig_opt_E,alphas_opt,kernel_time_ave = gdml_train.train(task,np.arange(1,20,4))#uracil
+# sig_opt,sig_opt_E,alphas_opt,kernel_time_ave = gdml_train.train(task,np.arange(1,20,4))#uracil
 
-test=gdml_train.test(task,sig_opt,alphas_opt,kernel_time_ave)
+# test=gdml_train.test(task,sig_opt,alphas_opt,kernel_time_ave)
 # #test(self, task,sig_optim,sig_candid1_opt,alphas_opt,kernel_time_ave,
 
-np.save('task.npy', task) 
+# np.save('task.npy', task) 
 
-np.save('sig_opt.npy', sig_opt) 
+# np.save('sig_opt.npy', sig_opt) 
 
-np.save('alphas_opt.npy', alphas_opt) 
+# np.save('alphas_opt.npy', alphas_opt) 
 
 
-# task=np.load('task_uracil_Finv_h2co{}.npy',allow_pickle=True).item()
-# sig_opt=np.load('sig_opt_F_h2co.npy')
+task=np.load('task.npy',allow_pickle=True).item()
+sig_opt=np.load('sig_opt.npy')
 
-# alphas_opt=np.load('alphas_opt_Fh2.npy',allow_pickle=True)
+alphas_opt=np.load('alphas_opt.npy',allow_pickle=True)
 #test_MAE=gdml_train.test(task,sig_opt,sig_opt_E,alphas_opt,kernel_time_ave)
 F_target=np.zeros((4,3)).reshape(-1)
 
@@ -2410,50 +2414,20 @@ F_target=np.zeros((4,3)).reshape(-1)
 
 #F_target[0]=0
 
-#initial=152
+initial=52
 n_sam=11
 R_target1=np.empty((n_sam,4,3))
 F_predict=np.empty((n_sam,4,3))
 cost=np.empty((n_sam,1))
 
-# import random
-# sam_set=random.sample(range(0, n_train[0]), n_sam)
-# for i in range(n_sam):
-#     print(' --------------: it is the  '+repr(i)+'-th sample-------------------')
-#     l=sam_set[i]
-#     task=np.load('task_uracil_Finv_h2co{}.npy',allow_pickle=True).item()
-#     sig_opt=np.load('sig_opt_F_h2co.npy')
 
-#     alphas_opt=np.load('alphas_opt_Fh2.npy',allow_pickle=True)
-    
-#     R_i,F_i,record_i,cost_i= gdml_train.inverseF(task,sig_opt,alphas_opt,l,F_target,lr=1e-10,
-#         cprsn_callback=None,
-#         save_progr_callback=None,  # TODO: document me
-#         callback=None)
-#     R_target1[i,:,:]=R_i.copy()
-#     F_predict[i,:,:]=F_i.copy()
-#     cost[i,0]=cost_i.copy()
-    
-#task=np.load('task_uracil_Finv_h2co{}.npy',allow_pickle=True).item()
-#sig_opt=np.load('sig_opt_F_h2co.npy')
+#np.array(R_design),R_val_atom_last,F_hat,record,cost_SAE
+R_design,R_val_atom_last,F_hat,record,cost_SAE= gdml_train.inverseF( task,sig_opt,alphas_opt,initial,F_target,lr=1e-11,
+            cprsn_callback=None,
+            save_progr_callback=None,  # TODO: document me
+            callback=None)
 
-#alphas_opt=np.load('alphas_opt_Fh2.npy',allow_pickle=True)
-#test=gdml_train.test(task,sig_opt,sig_opt_E,alphas_opt,kernel_time_ave)
-    
-# a=np.zeros((n_train[0],1))
-   
-# for i in range(n_train[0]):
-#     a[i]=np.sum(np.abs(task["F_train"][i,:,:].reshape(-1)-F_target))
-# initial=np.where(a==np.min(a))[0][0]
-# print(initial)
-# print(task["F_train"][initial,:])
-
-
- 
-# test_inv,F_inv,record,cost_SAE= gdml_train.inverseF( task,sig_opt,alphas_opt,initial,F_target,lr=1e-10,
-#             cprsn_callback=None,
-#             save_progr_callback=None,  # TODO: document me
-#             callback=None)
+np.savez('R_design.npy',R_design) 
 
 
 
