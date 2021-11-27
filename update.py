@@ -2427,7 +2427,7 @@ R_design,R_val_atom_last,F_hat,record,cost_SAE= gdml_train.inverseF( task,sig_op
             save_progr_callback=None,  # TODO: document me
             callback=None)
 
-np.savez('R_design.npy',R_design) 
+np.save('R_design.npy',R_design) 
 
 
 
