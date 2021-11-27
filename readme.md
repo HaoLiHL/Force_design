@@ -10,6 +10,8 @@ ii) Simulator: return the dataset, which serve as input for inverse_force.py
 
 while achieve the target property:
   iii) train the model based on the current dataset
+  
   iv) update.py return a dataset named "R_design.npy" contains the position of molecules.
+  
   v) simulator generate an dataset such as "H2C0_mu.npz" contains position, force and energy for dataset from step iv) and update the training dataset
 
