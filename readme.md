@@ -1,7 +1,7 @@
-# Work in Progress (WIP) To-do list
+## Work in Progress (WIP) To-do list
+* add workflow that conducts simulation after initial geometry prediction.
 
-
-# WIP log
+## WIP log
 2021/12/06<br>
 update.py contains core python scripts of PPGP in learning structure-force relation and predict next possible geometry for target force.<br>
 From the predicted structure, script that converts the structure to simulator and run would be needed.
