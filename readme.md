@@ -1,4 +1,16 @@
-First, given the name and other settings of the molecule, we want the simulator to generate a dataset such as "H2C0_mu.npz" contains position, force and energy
+# Work in Progress (WIP) To-do list
+
+
+# WIP log
+2021/12/06<br>
+update.py contains core python scripts of PPGP in learning structure-force relation and predict next possible geometry for target force.<br>
+From the predicted structure, script that converts the structure to simulator and run would be needed.
+
+
+
+
+# Overview
+This repository provides workflow to find the specific molecular geometry for target force (e.g., geometry minimization). First, given the name and other settings of the molecule, we want the simulator to generate a dataset such as "H2C0_mu.npz" contains position, force and energy
 
 Second, the update.py will generate a npy file such as "R_design.npy", which contains some molecule's configuration. We need simulator to generate the force and energy for those molecules.
 
