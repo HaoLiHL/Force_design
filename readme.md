@@ -2,11 +2,14 @@
 * add workflow that conducts simulation after initial geometry prediction.
 
 ## WIP log <br>
+01/21/2022 <br>
+In test_os.py, the simulation I/O is implemented for a given set of predictions.
+
 01/20/2022 <br>
 Finish a preliminary simulation input creation and read the energy from simulation.
 
 
-2021/12/06<br>
+12/06/2021<br>
 update.py contains core python scripts of PPGP in learning structure-force relation and predict next possible geometry for target force.<br>
 From the predicted structure, script that converts the structure to simulator and run would be needed.
 
