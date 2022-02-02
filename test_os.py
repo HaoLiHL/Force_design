@@ -6,15 +6,22 @@ import numpy as np
 import subprocess
 import os
 import math
+import pickle
 
 # # by running this command, you don't suspend the python script from running
 # test = subprocess.Popen(["echo", "test"])
 # # this script would have the python script wait till the os interaction finishes
 # test.wait()
 
+# read element table list
+with open('./scripts/element_table', 'rb') as fp:
+	element_table = pickle.load(fp)
+
 
 # this command can be removed once merge into the main program
 R_design = np.load('R_design.npy')
+
+atomic_number = np.load('atomic_number.npy')
 
 
 
@@ -81,33 +88,20 @@ for index_run in range(1):
 	with open(simulator_input_filename, 'wt') as input_write:
 		input_write.write("$molecule\n")
 		input_write.write("0 1\n")
-		# this section could be simplified
-		# this section could be simplified
-		# this section could be simplified
-		# this section could be simplified
-		# this section could be simplified
-		input_write.write("C\t")
-		for i_dimension in range(3):
-			# print(R_design[index_run, 0, i_dimension])
-			input_write.write("%.8lf\t" % R_design[index_run, 0, i_dimension])
-		input_write.write("\n")
-		input_write.write("O\t")
-		for i_dimension in range(3):
-			input_write.write("%.8lf\t" % R_design[index_run, 1, i_dimension])
-		input_write.write("\n")
-		input_write.write("H\t")
-		for i_dimension in range(3):
-			input_write.write("%.8lf\t" % R_design[index_run, 2, i_dimension])
-		input_write.write("\n")
-		input_write.write("H\t")
-		for i_dimension in range(3):
-			input_write.write("%.8lf\t" % R_design[index_run, 3, i_dimension])
-		input_write.write("\n")
-		# this section could be simplified
-		# this section could be simplified
-		# this section could be simplified
-		# this section could be simplified
-		# this section could be simplified
+
+		for index_atom in range(len(atomic_number)):
+			input_write.write("%s\t" % element_table[atomic_number[index_atom]-1])
+
+			for i_dimension in range(3):
+				# print(R_design[index_run, 0, i_dimension])
+				input_write.write("%.8lf\t" % R_design[index_run, index_atom, i_dimension])
+
+			input_write.write("\n")
+
+
+
+
+			
 		input_write.write("$end\n")
 		input_write.write("\n")
 		input_write.write("$rem\n")
@@ -201,6 +195,6 @@ for index_run in range(1):
 
 
 
-print(E_new_simulation)
-print(F_new_simulation)
+# print(E_new_simulation)
+# print(F_new_simulation)
 
