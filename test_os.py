@@ -74,8 +74,8 @@ F_new_simulation = np.zeros((num_molecules,num_atoms,3))
 
 
 
-# for index_run in range(num_molecules):
-for index_run in range(1):
+#for index_run in range(num_molecules):
+for index_run in range(2):
 
 	# in principle when writing the calculation file the loop should not assume
 	# the element in the molecule, however not sure where the atomic number for
@@ -95,8 +95,7 @@ for index_run in range(1):
 			for i_dimension in range(3):
 				# print(R_design[index_run, 0, i_dimension])
 				input_write.write("%.8lf\t" % R_design[index_run, index_atom, i_dimension])
-
-			input_write.write("\n")
+                        input_write.write("\n")
 
 
 
@@ -118,9 +117,9 @@ for index_run in range(1):
 
 
 	# submit jobs to calculation
-	# command_run_simulation = ["qchem", "-slurm", "-nt", num_parallel_core, simulator_input_filename, ">", simulator_output_filename]
-	# run_simulator = subprocess.Popen(' '.join(command_run_simulation), shell=True)
-	# run_simulator.wait()
+	command_run_simulation = ["qchem", "-slurm", "-nt", str(num_parallel_core), simulator_input_filename, ">", simulator_output_filename]
+	run_simulator = subprocess.Popen(' '.join(command_run_simulation), shell=True)
+	run_simulator.wait()
 
 	signal_simulation_success = 1
 	with open(simulator_output_filename, "rt") as read_ouput:
@@ -195,6 +194,6 @@ for index_run in range(1):
 
 
 
-# print(E_new_simulation)
-# print(F_new_simulation)
+print(E_new_simulation)
+print(F_new_simulation)
 
