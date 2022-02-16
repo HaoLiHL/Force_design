@@ -1557,8 +1557,8 @@ class GDMLTrain(object):
             # if cost1<24356:
             #     lr=1e-18
             R_val_atom_last=R_val_atom[0,:,:].copy()
-            R_val_atom[0,:,:]= R_val_atom[0,:,:] - drl.reshape(n_atoms,3)*lr
-            R_design.append(R_val_atom[0,:,:])
+            R_val_atom[0,:,:]= R_val_atom_last - drl.reshape(n_atoms,3)*lr
+            R_design.append(R_val_atom_last)
             #print(drl.reshape(n_atoms,3)*lr)
             #print(R_val_atom[0,:,:])
         
