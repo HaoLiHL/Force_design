@@ -2397,6 +2397,8 @@ np.save('sig_opt.npy', sig_opt)
 
 np.save('alphas_opt.npy', alphas_opt) 
 
+np.save('atomic_number.npy', dataset['z'])
+
 
 # task=np.load('task_uracil_Finv_h2co{}.npy',allow_pickle=True).item()
 # sig_opt=np.load('sig_opt_F_h2co.npy')

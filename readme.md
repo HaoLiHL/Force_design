@@ -2,11 +2,14 @@
 * add workflow that conducts simulation after initial geometry prediction.
 
 ## WIP log <br>
+02/02/2022 <br>
+Integrate automatic file I/O in the atom section. <br>
+
 01/21/2022 <br>
-In test_os.py, the simulation I/O is implemented for a given set of predictions.
+In test_os.py, the simulation I/O is implemented for a given set of predictions. <br>
 
 01/20/2022 <br>
-Finish a preliminary simulation input creation and read the energy from simulation.
+Finish a preliminary simulation input creation and read the energy from simulation. <br>
 
 
 12/06/2021<br>
