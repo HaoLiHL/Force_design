@@ -3,7 +3,7 @@ You are running Q-Chem version: 5.2.0
 #
 # job setting
 #
-local host:  nid00139
+local host:  nid00238
 current dir: /global/homes/m/mzhou035/Force_design
 input file:  simulator_input.dat
 output file: 
@@ -21,14 +21,14 @@ QCMPI:       slurm
 #
 # qchem directory setting
 #
-qcrun:       qchem27349
+qcrun:       qchem22055
 QCSCRATCH:   /global/cscratch1/sd/mzhou035
 QCLOCALSCR:  /tmp
 QCTMPDIR:    /tmp
-QCFILEPREF:  /tmp/qchem27349
+QCFILEPREF:  /tmp/qchem22055
 QCSAVEDIR:   
-workdirs:    /tmp/qchem27349
-workdir0:    /tmp/qchem27349
+workdirs:    /tmp/qchem22055
+workdir0:    /tmp/qchem22055
 partmpdirs =  
 #
 # parallel setting
@@ -36,7 +36,7 @@ partmpdirs =
 QCRSH:           ssh
 QCMPI:           slurm
 QCMPIRUN:        srun
-QCMACHINEFILE:   /tmp/qchem27349/hostfile
+QCMACHINEFILE:   /tmp/qchem22055/hostfile
 
 #
 # env setting
@@ -44,8 +44,8 @@ QCMACHINEFILE:   /tmp/qchem27349/hostfile
 exported envs:   QC QCAUX QCSCRATCH QCRUNNAME QCFILEPREF QCPROG QCPROG_S GUIFILE
 
 Running Job 1 of 1 simulator_input.dat
-qchem simulator_input.dat_27349.0 /tmp/qchem27349/ 0
-/global/common/cori/software/qchem/5.2/exe/qcprog.exe_s simulator_input.dat_27349.0 /tmp/qchem27349/
+qchem simulator_input.dat_22055.0 /tmp/qchem22055/ 0
+/global/common/cori/software/qchem/5.2/exe/qcprog.exe_s simulator_input.dat_22055.0 /tmp/qchem22055/
                   Welcome to Q-Chem
      A Quantum Leap Into The Future Of Chemistry
 
@@ -119,12 +119,12 @@ qchem simulator_input.dat_27349.0 /tmp/qchem27349/ 0
  Parts of Q-Chem use Armadillo 8.300.2 (Tropical Shenanigans).
  http://arma.sourceforge.net/
 
- Q-Chem begins on Tue Feb 15 16:27:54 2022  
+ Q-Chem begins on Tue Feb 15 20:43:24 2022  
 
-Host: cori08
+Host: cori04
 0
 
-     Scratch files written to /tmp/qchem27349//
+     Scratch files written to /tmp/qchem22055//
  May1019 |scratch|qcdevops|jenkins|workspace|build_RNUM -1
 Processing $rem in /global/common/cori/software/qchem/5.2/config/preferences:
 	 MEM_TOTAL  96000 
@@ -140,10 +140,10 @@ User input:
 --------------------------------------------------------------
 $molecule
 0 1
-C	51523.29806576	-0.43634391	0.32120574
-O	-0.12647105	0.59626297	-0.25816759
-H	-0.26271385	-1.77846065	0.05462642
-H	0.71605369	-0.53388479	1.38725590
+C	51523.31530925	-0.43634391	0.32120574
+O	-0.12586978	0.58803720	-0.25549131
+H	-0.26053451	-1.49693394	0.03401844
+H	0.69603108	-0.51703366	1.32137573
 $end
 
 $rem
@@ -160,12 +160,12 @@ $end
              Standard Nuclear Orientation (Angstroms)
     I     Atom           X                Y                Z
  ----------------------------------------------------------------
-    1      C   51523.2980657600    -0.4363439100     0.3212057400
-    2      O      -0.1264710500     0.5962629700    -0.2581675900
-    3      H      -0.2627138500    -1.7784606500     0.0546264200
-    4      H       0.7160536900    -0.5338847900     1.3872559000
+    1      C   51523.3153092500    -0.4363439100     0.3212057400
+    2      O      -0.1258697800     0.5880372000    -0.2554913100
+    3      H      -0.2605345100    -1.4969339400     0.0340184400
+    4      H       0.6960310800    -0.5170336600     1.3213757300
  ----------------------------------------------------------------
- Nuclear Repulsion Energy =           3.97477244 hartrees
+ Nuclear Repulsion Energy =           4.31127812 hartrees
  There are        8 alpha and        8 beta electrons
  Requested basis set is aug-cc-pVTZ
  There are 46 shells and 138 basis functions
@@ -177,17 +177,17 @@ $end
                        Distance Matrix (Angstroms)
              C (  1)   O (  2)   H (  3)
    O (  2) *********
-   H (  3) *********  2.399107
-   H (  4) *********  2.166680  2.069506
+   H (  3) *********  2.109278
+   H (  4) *********  2.093612  1.879498
  
  A cutoff of  1.0D-14 yielded    633 shell pairs
  There are      5585 function pairs (      7477 Cartesian)
- Smallest overlap matrix eigenvalue = 4.39E-03
+ Smallest overlap matrix eigenvalue = 2.97E-03
 
  Scale SEOQF with 1.000000e-09/1.000000e-01/1.000000e-01
 
  Standard Electronic Orientation quadrupole field applied
- Nucleus-field energy     =     0.0000000059 hartrees
+ Nucleus-field energy     =     0.0000000058 hartrees
  Guess from superposition of atomic densities
  Warning:  Energy on first SCF cycle will be non-variational
  SAD guess density has 16.000000 electrons
@@ -210,143 +210,35 @@ $end
  ---------------------------------------
   Cycle       Energy         DIIS error
  ---------------------------------------
-    1    -112.2892389792      3.35e-03  
-    2    -111.3369665586      1.27e-02  
-    3    -111.2608829050      1.38e-02  
-    4    -112.8103007692      8.73e-03  
-    5    -112.9003332103      7.46e-03  
-    6    -113.0866350195      4.67e-03  
-    7    -113.2106633587      1.23e-03  
-    8    -113.2172952805      1.17e-03  
-    9    -113.2190630833      1.07e-03  
-   10    -113.2228299007      5.28e-04  
-   11    -113.2239446951      5.58e-05  
-   12    -113.2239643108      2.10e-05  
-   13    -113.2239714903      1.90e-05  
-   14    -113.2239828713      1.79e-05  
-   15    -113.2240261844      1.05e-05  
-   16    -113.2240470683      2.98e-06  
-   17    -113.2240471718      2.49e-06  
-   18    -113.2240472199      3.09e-07  
-   19    -113.2240472206      4.63e-08  
-   20    -113.2240472206      1.22e-08  
-   21    -113.2240472206      1.84e-09  
-   22    -113.2240472206      3.47e-10  
-   23    -113.2240472206      7.91e-11  
-   24    -113.2240472206      1.45e-11  
-   25    -113.2240472206      1.52e-12  Convergence criterion met
+    1    -112.3129887867      3.91e-03  
+    2    -111.3642602145      1.27e-02  
+    3    -111.3307835903      1.32e-02  
+    4    -105.1908799376      2.64e-02  
+    5    -105.1422505939      2.66e-02  
+    6    -105.3327984133      2.58e-02  
+    7    -112.9948981831      6.47e-03  
+    8    -113.1052994002      4.20e-03  
+    9    -113.2084620691      1.90e-03  
+   10    -113.2436947415      8.70e-04  
+   11    -113.2504279565      1.08e-03  
+   12    -113.2507224824      1.08e-03  
+   13    -113.2556633654      6.15e-04  
+   14    -113.2575978054      8.83e-05  
+   15    -113.2576254725      3.76e-05  
+   16    -113.2576321794      8.21e-06  
+   17    -113.2576331567      4.68e-06  
+   18    -113.2576336114      4.25e-06  
+   19    -113.2576350554      2.83e-06  
+   20    -113.2576360430      5.12e-07  
+   21    -113.2576360595      1.19e-07  
+   22    -113.2576360597      2.03e-08  
+   23    -113.2576360597      4.42e-09  
+   24    -113.2576360597      9.25e-10  
+   25    -113.2576360597      6.94e-11  
+   26    -113.2576360597      9.38e-12  Convergence criterion met
  ---------------------------------------
- SCF time:   CPU 158.68s  wall 5.00s 
- SCF   energy in the final basis set =     -113.2240472206
- Total energy in the final basis set =     -113.2240472206
+ SCF time:   CPU 172.38s  wall 51.00s 
+ SCF   energy in the final basis set =     -113.2576360597
+ Total energy in the final basis set =     -113.2576360597
  
  Components of the MP2 correlation energy:
-        aaaa  correlation energy =        -0.0247333635 au
-        abab  correlation energy =        -0.2777842942 au
-        bbbb  correlation energy =        -0.0247333635 au
-        non-Brillouin singles    =        -0.0000000000 au
-
- Total  MP2   correlation energy =                    -0.32725102 au
-        MP2         total energy =                  -113.55129824 au
-  Entering Z-vector solver.
-   1         0           1      0.000615    0.000615
-   2         0           1      0.000297    0.000297
-   3         0           1      0.000062    0.000062
-   4         0           1      0.000016    0.000016
-   5         0           1      0.000012    0.000012
-   6         0           1      0.000018    0.000018
-   7         0           1      0.000010    0.000010
-   8         0           1      0.000003    0.000003
-   9         1           0      0.000000    0.000000    Roots Converged
- 
- --------------------------------------------------------------
- 
-                    Orbital Energies (a.u.)
- --------------------------------------------------------------
- 
- Alpha MOs
- -- Occupied --
--20.6726 -11.3659  -1.2308  -0.7260  -0.5479  -0.5458  -0.4091  -0.3582
- -- Virtual --
- -0.0611   0.0039   0.0194   0.0194   0.0660   0.0719   0.0972   0.1044
-  0.1251   0.1251   0.1519   0.1573   0.1994   0.2237   0.2295   0.2735
-  0.2780   0.3013   0.3013   0.3125   0.3125   0.3171   0.3199   0.3243
-  0.3335   0.5636   0.5813   0.5817   0.5817   0.5965   0.6572   0.6603
-  0.6873   0.7366   0.7406   0.7709   0.7799   0.8276   0.8662   0.8778
-  0.8976   0.9203   0.9391   0.9609   0.9990   1.0078   1.0173   1.0414
-  1.0414   1.0606   1.0606   1.0657   1.0657   1.0694   1.0704   1.0907
-  1.0907   1.0988   1.1061   1.1061   1.1114   1.1312   1.1457   1.1962
-  1.3027   1.4076   1.5407   1.7824   2.0883   2.1045   2.1062   2.1200
-  2.1351   2.1414   2.1697   2.2373   2.2590   2.3025   2.3379   2.3602
-  2.3602   2.3794   2.4007   2.7142   2.8543   3.3754   3.3754   3.4045
-  3.4045   3.4174   3.4174   3.4322   3.4510   3.4510   3.4793   3.4793
-  3.4889   3.8327   3.8378   3.8593   3.8661   3.8884   3.8955   3.9278
-  3.9319   3.9691   4.0037   4.0212   4.0684   4.0685   4.1651   4.2083
-  4.2145   4.3955   4.5600   4.6071   4.6286   6.4607   6.4981   6.4990
-  6.5147   6.5191   6.5225   6.6605   7.0034   7.0167   7.0234   7.0562
-  7.0723   9.0145
- --------------------------------------------------------------
- 
-          Ground-State Mulliken Net Atomic Charges
-
-     Atom                 Charge (a.u.)
-  ----------------------------------------
-      1 C                    -0.000000
-      2 O                    -0.267459
-      3 H                     0.134951
-      4 H                     0.132509
-  ----------------------------------------
-  Sum of atomic charges =     0.000000
-
- -----------------------------------------------------------------
-                    Cartesian Multipole Moments
- -----------------------------------------------------------------
-    Charge (ESU x 10^10)
-                 0.0000
-    Dipole Moment (Debye)
-         X       0.3974      Y      -2.0153      Z       1.1117
-       Tot       2.3356
-    Quadrupole Moments (Debye-Ang)
-        XX     -13.5151     XY       0.2440     YY     -14.3889
-        XZ       1.4217     YZ      -0.7716     ZZ     -11.7757
-    Octopole Moments (Debye-Ang^2)
-       XXX -794196.9581    XXY       4.5734    XYY -492735.6446
-       YYY       5.6565    XXZ       1.9248    XYZ      -0.1024
-       YYZ      -5.1257    XZZ -264732.1204    YZZ       1.3571
-       ZZZ      -2.2722
-    Hexadecapole Moments (Debye-Ang^3)
-      XXXX ************   XXXY  531859.6639   XXYY ************
-      XYYY  645008.0023   YYYY     -57.1084   XXXZ -112592.6879
-      XXYZ    8425.1823   XYYZ -158269.8346   YYYZ       9.7476
-      XXZZ ************   XYZZ  115514.6109   YYZZ     -16.8517
-      XZZZ -255102.7355   YZZZ       6.3559   ZZZZ     -27.2396
- -----------------------------------------------------------------
- DrvMan is completing analytic gradient of the MP2 energy
- MP2 relaxed dipole moment
-            1
-    1   0.1563654
-    2  -0.7928668
-    3   0.4373629
-	Magnitude:	 0.919 au	 2.336 Debye
- MP2 energy read as -113.551298
- Full Analytical Gradient of MP2 Energy (in au.)
-             1             2             3             4
-    1   -0.00000000   -0.01095433   -0.01844220    0.02939653
-    2    0.00000000    0.04176112   -0.04675112    0.00499000
-    3   -0.00000000   -0.02751997   -0.01983581    0.04735578
- Gradient time:  CPU 0.87 s  wall 0.22 s
-Archival summary:
-1\1\nid00139\JobtypUnspecified\MP2\BasisUnspecified\112\mzhou035\TueFeb1516:28:072022TueFeb1516:28:072022\0\\#,JobtypUnspecified,MP2,BasisUnspecified,\\0,1\O\H,1,2.16668\H,2,2.06951,1,68.9464\C,2,51522.6,1,112.882,3,112.804,0\\HF=-113.224047\MP2=-113.551298\\@
-
- Total job time:  12.63s(wall), 302.69s(cpu) 
- Tue Feb 15 16:28:07 2022
-
-        *************************************************************
-        *                                                           *
-        *  Thank you very much for using Q-Chem.  Have a nice day.  *
-        *                                                           *
-        *************************************************************
-
-
-remove work dirs /tmp/qchem27349.0 -- /tmp/qchem27349.-1
-rm -rf /tmp/qchem27349
