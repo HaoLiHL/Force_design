@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Thu Apr 28 21:02:17 2022
+
+@author: lihao
+"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 Created on Tue Sep 14 15:52:42 2021
 
 @author: lihao
@@ -2582,7 +2589,7 @@ def run_physics_baed_calculation(R_design, atomic_number):
     
     
    
-
+dataset = np.load("uracil_dft_mu.npz")
 #dataset=np.load('benzene_old_dft.npz')
 #dataset=np.load('data_h2co.npz')
 #dataset=np.load('h2co_ccsdt.npz')
@@ -2599,13 +2606,13 @@ gdml_train=GDMLTrain()
 #n_train=np.array([100])
 #n_train=np.array([200,400,600,800,1000,1200,1400,1600])
 #n_train=np.array([100])
+n_train = 100
 
+task=gdml_train.create_task(dataset,n_train,dataset,100,100,100,1e-12,use_E_cstr=False,batch_size=10,uncertainty=False)
 
-# task=gdml_train.create_task(dataset,n_train,dataset,200,500,100,1e-12,use_E_cstr=False,batch_size=10,uncertainty=False)
+sig_opt,sig_opt_E,alphas_opt,kernel_time_ave = gdml_train.train(task,np.arange(1,20,10))#uracil
 
-# sig_opt,sig_opt_E,alphas_opt,kernel_time_ave = gdml_train.train(task,np.arange(1,20,4))#uracil
-
-# test=gdml_train.test(task,sig_opt,alphas_opt,kernel_time_ave)
+test=gdml_train.test(task,sig_opt,alphas_opt,kernel_time_ave)
 # #test(self, task,sig_optim,sig_candid1_opt,alphas_opt,kernel_time_ave,
 
 # np.save('task.npy', task) 
@@ -2615,12 +2622,12 @@ gdml_train=GDMLTrain()
 # np.save('alphas_opt.npy', alphas_opt) 
 
 
-task=np.load('task.npy',allow_pickle=True).item()
-sig_opt=np.load('sig_opt.npy')
+#task=np.load('task.npy',allow_pickle=True).item()
+#sig_opt=np.load('sig_opt.npy')
 
-alphas_opt=np.load('alphas_opt.npy',allow_pickle=True)
+#alphas_opt=np.load('alphas_opt.npy',allow_pickle=True)
 #test_MAE=gdml_train.test(task,sig_opt,sig_opt_E,alphas_opt,kernel_time_ave)
-F_target=np.zeros((4,3)).reshape(-1)
+F_target=np.zeros((12,3)).reshape(-1)
 
 #np.min(np.sum(np.abs(task['F_train']-F_target),1))
 #F_target = task["F_train"][4,:,:].reshape(-1)
@@ -2640,76 +2647,28 @@ R_design,R_val_atom_last,F_hat,record,cost_SAE= gdml_train.inverseF(task,sig_opt
             save_progr_callback=None,  # TODO: document me
             callback=None)
 
-np.save('R_design.npy',R_design) 
+# np.save('R_design.npy',R_design) 
 
 
 
 
-#---------------------- example workflow ----------------------#
-#---------------------- example workflow ----------------------#
-#---------------------- example workflow ----------------------#
-#---------------------- example workflow ----------------------#
-#---------------------- example workflow ----------------------#
-#---------------------- example workflow ----------------------#
+# #---------------------- example workflow ----------------------#
+# #---------------------- example workflow ----------------------#
+# #---------------------- example workflow ----------------------#
+# #---------------------- example workflow ----------------------#
+# #---------------------- example workflow ----------------------#
+# #---------------------- example workflow ----------------------#
 
-# compiling command only needs to be run once in the beginnning
-compile_scirpts_for_physics_based_calculation_IO(R_design)
-# 
-# atomic number shall be defined in the beginning of the program once as well
-atomic_number = np.load('H2CO_atomic_number.npy')
-# 
-# for-loop
-new_E, new_F = run_physics_baed_calculation(R_design, atomic_number)
-# update model blablabla
+# # compiling command only needs to be run once in the beginnning
+# compile_scirpts_for_physics_based_calculation_IO(R_design)
+# # 
+# # atomic number shall be defined in the beginning of the program once as well
+# atomic_number = np.load('H2CO_atomic_number.npy')
+# # 
+# # for-loop
+# new_E, new_F = run_physics_baed_calculation(R_design, atomic_number)
+# # update model blablabla
 
-#---------------------- example workflow ----------------------#
-#---------------------- example workflow ----------------------#
-#---------------------- example workflow ----------------------#
-#---------------------- example workflow ----------------------#
-#---------------------- example workflow ----------------------#
-#---------------------- example workflow ----------------------#
+# #---------------------- example workflow ----------------------#
 
-
-
-
-
-# R_target1[(n_sam-1),:,:]= test_inv.copy()
-# F_predict[(n_sam-1),:,:]= F_inv.copy()
-# cost[(n_sam-1),0]=cost_SAE.copy()        
-        
-# np.savez('F_target_200_train_20predict.npy', R_target=R_target1,F_predict=F_predict,cost=cost) 
-
-
-
-# np.save('record_Fmu.npy', record) 
-
-# from matplotlib import pyplot as plt
-
-# plt.plot(np.arange(len(record))+1,np.array(record))
-# plt.xlabel("iteration time")
-# plt.ylabel("cost")
-
-# #---------------plot the R_target------------------------------
-#R=task1['R_test']
-
-
-# R_target=test_inv[None]
-# #R_target=task["R_train"][0,:,:][None,:]
-# import plotly.graph_objects as go
-# import numpy as np
-# #import plotly.graph_objects as go
-# import plotly.io as pio
-# #pio.renderers.default = 'svg'  # change it back to spyder
-# pio.renderers.default = 'browser'
-
-# # Helix equation
-# #t = np.linspace(0, 10, 50)
-# x, y, z = R_target[0,:,0],R_target[0,:,1],R_target[0,:,2]
-
-# fig = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z,
-#                                   mode='markers')])
-# fig.show()
-# fig.savefig('Design_structure.png',dpi=300,bbox_inches='tight')
-
-    
 
