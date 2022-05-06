@@ -79,7 +79,7 @@ print('another one \n')
 AFF.compile_scirpts_for_physics_based_calculation_IO(R_design)
 # 
 # atomic number shall be defined in the beginning of the program once as well
-atomic_number = np.load('H2CO_atomic_number.npy')
+atomic_number = dataset['z']
 # 
 # for-loop
 new_E, new_F = AFF.run_physics_baed_calculation(R_design, atomic_number)

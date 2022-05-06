@@ -2378,6 +2378,9 @@ def compile_scirpts_for_physics_based_calculation_IO(R_design):
 =======
     # compile scripts to read energy and force from the output from physcis-baed calculation
     def compile_scirpts_for_physics_based_calculation_IO(R_design):
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 
