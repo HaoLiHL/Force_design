@@ -82,6 +82,10 @@ AFF.compile_scirpts_for_physics_based_calculation_IO(R_design)
 atomic_number = dataset['z']
 # 
 # for-loop
+# suggested computational method for H2CO for better reproduction of literature data
+# computational_method = ['mp2', 'aug-cc-pVTZ']
+# suggested computational method for uracil
+computational_method = ['PBE', '6-31G']
 new_E, new_F = AFF.run_physics_baed_calculation(R_design, atomic_number)
 print('new_E,new_F ',new_F)
 #task = np.load('uracil_task.npy',allow_pickle=True).item()

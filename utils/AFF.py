@@ -1927,7 +1927,7 @@ def compile_scirpts_for_physics_based_calculation_IO(R_design):
 
 
 # function for external physics-based calculation
-def run_physics_baed_calculation(R_design, atomic_number):
+def run_physics_baed_calculation(R_design, atomic_number, computational_method):
 
     # attention!!!
     # maybe we can change this into parameter for users to change
@@ -1997,8 +1997,12 @@ def run_physics_baed_calculation(R_design, atomic_number):
             input_write.write("$rem\n")
             input_write.write("jobtype                force\n")
             input_write.write("exchange               HF\n")
-            input_write.write("correlation            mp2\n")
-            input_write.write("basis                  aug-cc-pVTZ\n")
+            input_write.write("correlation            ")
+            input_write.write(str(computational_method[0]))
+            input_write.write("\n")
+            input_write.write("basis                  ")
+            input_write.write(str(computational_method[1]))
+            input_write.write("\n")
             input_write.write("SCF_CONVERGENCE 11\n")
             input_write.write("symmetry false\n")
             input_write.write("sym_ignore true\n")
