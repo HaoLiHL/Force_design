@@ -2037,8 +2037,8 @@ def run_physics_baed_calculation(R_design, atomic_number, computational_method):
             conv_energy = subprocess.Popen(' '.join(command_conv_energy), shell=True)
             conv_energy.wait()
             single_energy = np.loadtxt(energy_filename)
-            #os.remove(temp_energy_filename)
-            #os.remove(energy_filename)
+            os.remove(temp_energy_filename)
+            os.remove(energy_filename)
             if np.any(single_energy) is False:
                 print('!!!!!!!! no energy read')
             else:
@@ -2054,8 +2054,8 @@ def run_physics_baed_calculation(R_design, atomic_number, computational_method):
             conv_force = subprocess.Popen(' '.join(command_force_energy), shell=True)
             conv_force.wait()
             single_force = np.loadtxt(force_filename)
-            #os.remove(temp_force_filename)
-            #os.remove(force_filename)
+            os.remove(temp_force_filename)
+            os.remove(force_filename)
             if np.any(single_force) is False:
                 print('!!!!!!!! no force read')
             else:
