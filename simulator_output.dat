@@ -3,8 +3,8 @@ You are running Q-Chem version: 5.4.2
 #
 # job setting
 #
-local host:  nid00034
-current dir: /global/homes/m/mzhou035/Force_design
+local host:  nid00009
+current dir: /global/homes/m/mzhou035/test_Force_design/Force_design
 input file:  simulator_input.dat
 output file: 
 nprocs     : 0
@@ -21,14 +21,14 @@ QCMPI:       slurm
 #
 # qchem directory setting
 #
-qcrun:       qchem64322
+qcrun:       qchem41395
 QCSCRATCH:   /global/cscratch1/sd/mzhou035
 QCLOCALSCR:  /tmp
 QCTMPDIR:    /tmp
-QCFILEPREF:  /tmp/qchem64322
+QCFILEPREF:  /tmp/qchem41395
 QCSAVEDIR:   
-workdirs:    /tmp/qchem64322
-workdir0:    /tmp/qchem64322
+workdirs:    /tmp/qchem41395
+workdir0:    /tmp/qchem41395
 partmpdirs =  
 #
 # parallel setting
@@ -36,7 +36,7 @@ partmpdirs =
 QCRSH:           ssh
 QCMPI:           slurm
 QCMPIRUN:        srun
-QCMACHINEFILE:   /tmp/qchem64322/hostfile
+QCMACHINEFILE:   /tmp/qchem41395/hostfile
 
 #
 # env setting
@@ -44,8 +44,8 @@ QCMACHINEFILE:   /tmp/qchem64322/hostfile
 exported envs:   QC QCAUX QCSCRATCH QCRUNNAME QCFILEPREF QCPROG QCPROG_S GUIFILE
 
 Running Job 1 of 1 simulator_input.dat
-qchem simulator_input.dat_64322.0 /tmp/qchem64322/ 0
-/global/common/cori_cle7/software/qchem/5.4.2/exe/qcprog.exe_s simulator_input.dat_64322.0 /tmp/qchem64322/
+qchem simulator_input.dat_41395.0 /tmp/qchem41395/ 0
+/global/common/cori_cle7/software/qchem/5.4.2/exe/qcprog.exe_s simulator_input.dat_41395.0 /tmp/qchem41395/
                   Welcome to Q-Chem
      A Quantum Leap Into The Future Of Chemistry
 
@@ -137,16 +137,15 @@ qchem simulator_input.dat_64322.0 /tmp/qchem64322/ 0
  Parts of Q-Chem use Armadillo 9.900.5 (Nocturnal Misbehaviour).
  http://arma.sourceforge.net/
 
- Q-Chem begins on Wed Apr 13 22:14:09 2022  
+ Q-Chem begins on Mon May  9 18:15:22 2022  
 
- Host: cori02
+ Host: cori08
 0
 
-     Scratch files written to /tmp/qchem64322//
+     Scratch files written to /tmp/qchem41395//
  Dec1321 |scratch|qcdevops|jenkins|workspace|build_RNUM 7470   
  Processing $rem in /global/common/cori_cle7/software/qchem/5.4.2/config/preferences:
  Processing $rem in /global/homes/m/mzhou035/.qchemrc:
- Core orbitals will be frozen
 
  Checking the input file for inconsistencies... 	...done.
 
@@ -155,17 +154,25 @@ User input:
 --------------------------------------------------------------
 $molecule
 0 1
-C	0.05651673	-0.47584222	0.30651935
-O	-0.12584381	0.59040784	-0.25998207
-H	-0.26301118	-1.42278952	0.02327571
-H	0.68578566	-0.51403096	1.39658035
+C	1.21238773	0.11934573	1.12336494
+C	0.27795805	-0.77559402	1.55254456
+N	-0.83301873	-1.02272272	0.79391547
+C	-1.08935878	-0.41897305	-0.51446736
+N	-0.02818888	0.34494393	-0.94313243
+C	1.05062057	0.75541527	-0.11270664
+O	-2.15791876	-0.75738185	-1.13702602
+O	1.78198174	1.70059753	-0.48614264
+H	0.26958048	-1.32980550	2.46354171
+H	-1.49480009	-1.73094623	1.05184644
+H	-0.17231383	0.88010939	-1.80073333
+H	2.10117797	0.48247751	1.73209796
 $end
 
 $rem
 jobtype                force
 exchange               HF
-correlation            mp2
-basis                  aug-cc-pVTZ
+correlation            PBE
+basis                  6-31G
 SCF_CONVERGENCE 11
 symmetry false
 sym_ignore true
@@ -175,37 +182,59 @@ $end
              Standard Nuclear Orientation (Angstroms)
     I     Atom           X                Y                Z
  ----------------------------------------------------------------
-    1      C       0.0565167300    -0.4758422200     0.3065193500
-    2      O      -0.1258438100     0.5904078400    -0.2599820700
-    3      H      -0.2630111800    -1.4227895200     0.0232757100
-    4      H       0.6857856600    -0.5140309600     1.3965803500
+    1      C       1.2123877300     0.1193457300     1.1233649400
+    2      C       0.2779580500    -0.7755940200     1.5525445600
+    3      N      -0.8330187300    -1.0227227200     0.7939154700
+    4      C      -1.0893587800    -0.4189730500    -0.5144673600
+    5      N      -0.0281888800     0.3449439300    -0.9431324300
+    6      C       1.0506205700     0.7554152700    -0.1127066400
+    7      O      -2.1579187600    -0.7573818500    -1.1370260200
+    8      O       1.7819817400     1.7005975300    -0.4861426400
+    9      H       0.2695804800    -1.3298055000     2.4635417100
+   10      H      -1.4948000900    -1.7309462300     1.0518464400
+   11      H      -0.1723138300     0.8801093900    -1.8007333300
+   12      H       2.1011779700     0.4824775100     1.7320979600
  ----------------------------------------------------------------
- Nuclear Repulsion Energy =          30.70446441 hartrees
- There are        8 alpha and        8 beta electrons
- Requested basis set is aug-cc-pVTZ
- There are 46 shells and 138 basis functions
+ Nuclear Repulsion Energy =         352.38789780 hartrees
+ There are       29 alpha and       29 beta electrons
+ Requested basis set is 6-31G
+ There are 32 shells and 80 basis functions
 
  Total QAlloc Memory Limit  96000 MB
  Mega-Array Size       188 MB
  MEM_STATIC part       192 MB
 
                        Distance Matrix (Angstroms)
-             C (  1)   O (  2)   H (  3)
-   O (  2)  1.221093
-   H (  3)  1.038766  2.037649
-   H (  4)  1.259234  2.150053  1.900532
+             C (  1)   C (  2)   N (  3)   C (  4)   N (  5)   C (  6)
+   C (  2)  1.363184
+   N (  3)  2.365702  1.367794
+   C (  4)  2.875816  2.503851  1.463588
+   N (  5)  2.420813  2.752769  2.352785  1.376010
+   C (  6)  1.399509  2.390410  2.744419  2.473886  1.421944
+   O (  7)  4.151745  3.628721  2.356756  1.282155  2.405923  3.692223
+   O (  8)  2.327082  3.542578  3.986634  3.569030  2.307239  1.252084
+   H (  9)  2.187464  1.066366  2.024272  3.397774  3.807740  3.405176
+   H ( 10)  3.279872  2.075107  1.003027  2.083025  3.231131  3.743974
+   H ( 11)  3.323629  3.766772  3.284738  2.045255  1.021104  2.088193
+   H ( 12)  1.136824  2.222412  3.428604  4.004896  3.421984  2.140437
+             O (  7)   O (  8)   H (  9)   H ( 10)   H ( 11)
+   O (  8)  4.689150
+   H (  9)  4.380012  4.491251
+   H ( 10)  2.485702  4.987805  2.294959
+   H ( 11)  2.657915  2.494117  4.823177  4.087027
+   H ( 12)  5.282900  2.550744  2.678456  4.277037  4.219926
  
- A cutoff of  1.0D-14 yielded   1081 shell pairs
- There are      9817 function pairs (     13252 Cartesian)
- Smallest overlap matrix eigenvalue = 7.72E-05
+ A cutoff of  1.0D-14 yielded    492 shell pairs
+ There are      3252 function pairs
+ Smallest overlap matrix eigenvalue = 1.87E-03
 
  Scale SEOQF with 1.000000e-01/1.000000e-01/1.000000e-01
 
  Standard Electronic Orientation quadrupole field applied
- Nucleus-field energy     =     0.0000000002 hartrees
+ Nucleus-field energy     =     0.0000000006 hartrees
  Guess from superposition of atomic densities
  Warning:  Energy on first SCF cycle will be non-variational
- SAD guess density has 16.000000 electrons
+ SAD guess density has 58.000000 electrons
 
  -----------------------------------------------------------------------
   General SCF calculation program by
@@ -214,7 +243,9 @@ $end
   Daniel Levine, Susi Lehtola, Hugh Burton, Evgeny Epifanovsky,
   Bang C. Huynh
  -----------------------------------------------------------------------
- Hartree-Fock
+ Exchange:     1.0000 Hartree-Fock
+ Correlation:  1.0000 PBE
+ Using SG-1 standard quadrature grid
  using 32 threads for integral computing
  -------------------------------------------------------
  OpenMP Integral computing Module                
@@ -226,46 +257,33 @@ $end
  ---------------------------------------
   Cycle       Energy         DIIS error
  ---------------------------------------
-    1    -113.9955751407      3.27e-02  
-    2    -113.8205339904      5.75e-03  
-    3    -113.8532915433      5.03e-03  
-    4    -113.8945444241      4.37e-04  
-    5    -113.8953502013      1.71e-04  
-    6    -113.8955081856      7.17e-05  
-    7    -113.8955544905      2.99e-05  
-    8    -113.8955594810      4.72e-06  
-    9    -113.8955595934      6.56e-07  
-   10    -113.8955595963      1.41e-07  
-   11    -113.8955595964      2.69e-08  
-   12    -113.8955595964      6.40e-09  
-   13    -113.8955595964      3.18e-09  
-   14    -113.8955595964      1.55e-09  
-   15    -113.8955595964      4.07e-10  
-   16    -113.8955595964      6.12e-11  
-   17    -113.8955595964      2.21e-11  
-   18    -113.8955595964      7.88e-12  Convergence criterion met
+    1    -416.9424556588      1.21e-01  
+    2    -413.9529278674      1.76e-02  
+    3    -414.0355976934      1.70e-02  
+    4    -414.2181045162      1.33e-03  
+    5    -414.2213263249      5.71e-04  
+    6    -414.2218269992      2.14e-04  
+    7    -414.2219812282      9.49e-05  
+    8    -414.2220046229      4.08e-05  
+    9    -414.2220078120      1.36e-05  
+   10    -414.2220081685      5.05e-06  
+   11    -414.2220082160      1.58e-06  
+   12    -414.2220082204      6.57e-07  
+   13    -414.2220082211      1.68e-07  
+   14    -414.2220082211      6.64e-08  
+   15    -414.2220082212      2.15e-08  
+   16    -414.2220082212      8.97e-09  
+   17    -414.2220082212      3.37e-09  
+   18    -414.2220082212      8.91e-10  
+   19    -414.2220082212      3.02e-10  
+   20    -414.2220082212      1.44e-10  
+   21    -414.2220082212      6.65e-11  
+   22    -414.2220082212      2.29e-11  
+   23    -414.2220082212      4.74e-12  Convergence criterion met
  ---------------------------------------
- SCF time:   CPU 140.86s  wall 4.00s 
- SCF   energy in the final basis set =     -113.8955595964
- Total energy in the final basis set =     -113.8955595964
- 
- Components of the MP2 correlation energy:
-        aaaa  correlation energy =        -0.0485074664 au
-        abab  correlation energy =        -0.3094165241 au
-        bbbb  correlation energy =        -0.0485074664 au
-        non-Brillouin singles    =        -0.0000000000 au
-
- Total  MP2   correlation energy =                    -0.40643146 au
-        MP2         total energy =                  -114.30199105 au
-  Entering Z-vector solver.
- Full subspace dimension requested for CIS/TDDFT
- MAX_CIS_SUBSPACE fits in available memory
-   1         0           1      0.000452    0.000452
-   2         0           1      0.000143    0.000143
-   3         0           1      0.000047    0.000047
-   4         0           1      0.000012    0.000012
-   5         0           1      0.000003    0.000003
-   6         1           0      0.000000    0.000000    Roots Converged
+ SCF time:   CPU 79.82s  wall 3.00s 
+ SCF   energy in the final basis set =     -414.2220082212
+ Total energy in the final basis set =     -414.2220082212
  
  --------------------------------------------------------------
  
@@ -274,35 +292,36 @@ $end
  
  Alpha MOs
  -- Occupied --
--20.5871 -11.3589  -1.4013  -0.8761  -0.6814  -0.6461  -0.5362  -0.4390
+-20.5982 -20.5807 -15.6887 -15.6867 -11.4870 -11.4289 -11.3871 -11.2973
+ -1.4785  -1.4457  -1.3611  -1.3081  -1.1441  -0.9928  -0.9557  -0.8566
+ -0.8141  -0.7758  -0.7230  -0.7071  -0.6807  -0.6499  -0.6312  -0.6058
+ -0.5734  -0.5189  -0.4926  -0.4754  -0.4042
  -- Virtual --
-  0.0257   0.0427   0.0607   0.0762   0.1247   0.1301   0.1324   0.1736
-  0.1994   0.2098   0.2103   0.2544   0.2550   0.2766   0.3156   0.3292
-  0.3386   0.3593   0.3778   0.3849   0.3980   0.4241   0.4849   0.4913
-  0.5597   0.5682   0.6419   0.6915   0.7103   0.7650   0.8244   0.8311
-  0.8333   0.8574   0.8682   0.8791   0.9201   0.9335   0.9389   0.9562
-  0.9926   1.0038   1.0200   1.0336   1.0730   1.0787   1.0972   1.1044
-  1.2468   1.2723   1.2794   1.3516   1.3770   1.4549   1.4701   1.4915
-  1.5758   1.5815   1.6276   1.6694   1.7058   1.8057   1.8468   1.9676
-  2.0555   2.1262   2.2126   2.2748   2.3240   2.3351   2.3508   2.4903
-  2.4950   2.5835   2.5935   2.6979   2.7518   2.7620   2.8530   2.9844
-  3.0599   3.0679   3.1432   3.2221   3.3812   3.4299   3.5150   3.5180
-  3.6156   3.6677   3.6766   3.7639   3.9171   4.0411   4.0656   4.0767
-  4.1267   4.2066   4.2812   4.3424   4.4951   4.5357   4.6734   4.6950
-  4.7951   4.8982   5.0098   5.1165   5.2036   5.2558   5.3417   5.3924
-  5.8435   6.1080   6.2105   6.4257   6.5916   6.6013   6.8993   6.9314
-  7.0660   7.1755   7.1938   7.3876   7.5213   7.6265   7.7050   7.7367
- 14.6020  16.2545
+  0.0353   0.0934   0.1628   0.2116   0.2289   0.2423   0.2590   0.3096
+  0.3190   0.3743   0.3830   0.4485   0.4933   0.5225   0.6284   0.6538
+  0.6959   0.7070   0.7527   0.7677   0.7766   0.8086   0.8270   0.8452
+  0.8509   0.8956   0.9443   1.0200   1.0383   1.0503   1.0593   1.1012
+  1.1052   1.1568   1.1657   1.2024   1.2356   1.2702   1.2917   1.3138
+  1.3293   1.3913   1.4066   1.5070   1.5765   1.6015   1.6819   1.7893
+  1.8455   2.2227   2.2704
  --------------------------------------------------------------
  
           Ground-State Mulliken Net Atomic Charges
 
      Atom                 Charge (a.u.)
   ----------------------------------------
-      1 C                    -0.428579
-      2 O                    -0.380472
-      3 H                     0.540307
-      4 H                     0.268744
+      1 C                    -0.418562
+      2 C                     0.226659
+      3 N                    -1.044408
+      4 C                     1.117739
+      5 N                    -1.038998
+      6 C                     0.803873
+      7 O                    -0.618976
+      8 O                    -0.612369
+      9 H                     0.316158
+     10 H                     0.460369
+     11 H                     0.476976
+     12 H                     0.331538
   ----------------------------------------
   Sum of atomic charges =     0.000000
 
@@ -310,41 +329,40 @@ $end
                     Cartesian Multipole Moments
  -----------------------------------------------------------------
     Charge (ESU x 10^10)
-                 0.0000
+                -0.0000
     Dipole Moment (Debye)
-         X       0.2157      Y      -2.1298      Z       0.9016
-       Tot       2.3228
+         X      -0.1159      Y      -2.9218      Z       4.2578
+       Tot       5.1652
     Quadrupole Moments (Debye-Ang)
-        XX     -12.0488     XY       0.2306     YY     -11.8639
-        XZ      -0.2039     YZ       0.1468     ZZ     -12.2282
+        XX     -58.8228     XY      -6.7738     YY     -48.1796
+        XZ      -2.1302     YZ      -6.4111     ZZ     -39.3261
     Octopole Moments (Debye-Ang^2)
-       XXX      -0.1900    XXY       0.4937    XYY      -0.4548
-       YYY      -0.3657    XXZ      -1.1975    XYZ      -0.0959
-       YYZ      -1.4981    XZZ       0.4647    YZZ       0.4522
-       ZZZ      -3.5724
+       XXX       7.8288    XXY      -6.2787    XYY     -18.9360
+       YYY     -16.3511    XXZ      20.9303    XYZ      13.7678
+       YYZ       8.0131    XZZ       6.4906    YZZ      -2.3756
+       ZZZ       1.6172
     Hexadecapole Moments (Debye-Ang^3)
-      XXXX     -15.1480   XXXY       1.9233   XXYY      -9.0454
-      XYYY       2.2478   YYYY     -38.0862   XXXZ      -3.8534
-      XXYZ       2.3737   XYYZ      -1.3843   YYYZ       6.9186
-      XXZZ      -6.9204   XYZZ       0.7436   YYZZ     -11.4774
-      XZZZ      -3.2081   YZZZ       7.0462   ZZZZ     -27.6852
+      XXXX    -546.4942   XXXY    -148.7058   XXYY    -145.0817
+      XYYY    -131.6985   YYYY    -266.8188   XXXZ     -76.6658
+      XXYZ       9.2161   XYYZ     -22.0630   YYYZ      32.0024
+      XXZZ    -139.1881   XYZZ     -42.3976   YYZZ     -79.4356
+      XZZZ     -56.2221   YZZZ       7.2839   ZZZZ    -266.7624
  -----------------------------------------------------------------
- DrvMan is completing analytic gradient of the MP2 energy
- MP2 relaxed dipole moment
-            1
-    1   0.0848621
-    2  -0.8379398
-    3   0.3547098
-	Magnitude:	 0.914 au	 2.323 Debye
- MP2 energy read as -114.301991
- Full Analytical Gradient of MP2 Energy (in au.)
-             1             2             3             4
-    1   -0.04649159    0.00007153    0.01781247    0.02860759
-    2   -0.05698855    0.02581918    0.03455538   -0.00338601
-    3   -0.06894129   -0.00473905    0.02227225    0.05140809
- Gradient time:  CPU 7.08 s  wall 0.24 s
- Total job time:  20.16s(wall), 370.97s(cpu) 
- Wed Apr 13 22:14:29 2022
+ Calculating analytic gradient of the SCF energy
+ Gradient of SCF Energy
+            1           2           3           4           5           6
+    1  -0.0069486  -0.0027076   0.0067346   0.0330422   0.0259671  -0.0134314
+    2   0.0220648  -0.0233370  -0.0208817   0.0629925  -0.0149714  -0.0556324
+    3  -0.0562119   0.0293117   0.0566857  -0.0122889  -0.0166376   0.0504384
+            7           8           9          10          11          12
+    1  -0.0961413   0.0396139  -0.0098150  -0.0082914  -0.0087749   0.0407525
+    2  -0.0412386   0.0527954  -0.0074590  -0.0146705   0.0174612   0.0228768
+    3  -0.0481766  -0.0101160   0.0001045   0.0038304  -0.0221683   0.0252285
+ Max gradient component =       9.614E-02
+ RMS gradient           =       3.451E-02
+ Gradient time:  CPU 12.65 s  wall 0.40 s
+ Total job time:  3.38s(wall), 104.80s(cpu) 
+ Mon May  9 18:15:25 2022
 
         *************************************************************
         *                                                           *
@@ -353,5 +371,5 @@ $end
         *************************************************************
 
 
-remove work dirs /tmp/qchem64322.0 -- /tmp/qchem64322.-1
-rm -rf /tmp/qchem64322
+remove work dirs /tmp/qchem41395.0 -- /tmp/qchem41395.-1
+rm -rf /tmp/qchem41395
