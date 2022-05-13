@@ -87,7 +87,9 @@ atomic_number = dataset['z']
 # suggested computational method for uracil
 computational_method = ['PBE', '6-31G']
 new_E, new_F = AFF.run_physics_baed_calculation(R_val_atom_last[None], atomic_number, computational_method)
-cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
+print(np.array(new_F).shape)
+print(new_F.shape)
+cost = np.sum(np.abs(np.concatenate(new_F)))
 
 print("current real cost is ",cost)
 print('new_E,new_F ',new_F)
@@ -96,7 +98,7 @@ n_loop = 0
 
 while n_loop<3:
     
-    
+    n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
     
     n_train = task['R_train'].shape[0]
@@ -130,8 +132,8 @@ while n_loop<3:
     # suggested computational method for uracil
     computational_method = ['PBE', '6-31G']
     new_E, new_F = AFF.run_physics_baed_calculation(R_val_atom_last[None], atomic_number, computational_method)
-    cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
-    
+    #cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
+    cost = np.sum(np.abs(np.concatenate(new_F)))
     print("current real cost is ",cost)
     print('new_E,new_F ',new_F)
     
