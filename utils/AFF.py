@@ -1278,10 +1278,11 @@ class AFFTrain(object):
         record=[]
         kk=1
         cost_SAE=1000
+        cost_previous = cost_SAE
         
         R_design= []
         
-        while kk<5 and cost_SAE>0.3:
+        while kk<100 and cost_SAE>0.3:
             kk+=1
 
             R_desc_val_atom, R_d_desc_val_atom = desc.from_R(R_val_atom,lat_and_inv=lat_and_inv,
@@ -1383,14 +1384,21 @@ class AFFTrain(object):
                 #F_star[index_i]=F_hat_val_i
                 
                       #a=(np.concatenate(F_star_L)<=np.concatenate(F_val_atom) and np.concatenate(F_star_H)>=np.concatenate(F_val_atom))
-            cost1=np.sum((  np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target))**2)
             cost_SAE=np.sum(np.abs(np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target)))
-            cost-=1
+            # L-2 LOSS
+           # cost_SAE=np.sum((  np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target))**2) 
+            
+            #cost-=1
             #F_diff= (np.concatenate(F_hat_val_F)-np.concatenate(F_val_atom)) ### 3N vector of Fij- Fij_tilde
         
             # delta should be a 3N * 3N matrix, i_th row respresent the gradient w.r.t r_i
             #delta  #
-    
+            R_val_atom_last=R_val_atom[0,:,:].copy()
+            if cost_SAE>cost_previous:
+                print("return the current best L-2 LOSS",cost_previous)
+                break
+                
+            
             
             
             #RMSE_F=np.sqrt(np.mean((np.concatenate(F_hat_val_F)-np.concatenate(F_val_atom))**2))/np.std(np.concatenate(F_val_atom))
@@ -1398,7 +1406,7 @@ class AFFTrain(object):
             record.append(cost_SAE)
             #print(drl)
             #print(' the mean of drl is '+repr(np.max(np.abs(drl))))
-            
+            cost_previous = cost_SAE
             dy_lr=1/np.max(np.abs(drl))* 1e-2
             #print(np.concatenat(F_hat_val_F))
             #R_val_atom+=lr
@@ -1406,7 +1414,7 @@ class AFFTrain(object):
             #     lr=1e-17
             # if cost1<24356:
             #     lr=1e-18
-            R_val_atom_last=R_val_atom[0,:,:].copy()
+            
             R_val_atom[0,:,:]= R_val_atom_last - drl.reshape(n_atoms,3)*lr
             R_design.append(R_val_atom_last)
             #print(drl.reshape(n_atoms,3)*lr)

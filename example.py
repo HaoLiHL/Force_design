@@ -86,8 +86,62 @@ atomic_number = dataset['z']
 # computational_method = ['mp2', 'aug-cc-pVTZ']
 # suggested computational method for uracil
 computational_method = ['PBE', '6-31G']
-new_E, new_F = AFF.run_physics_baed_calculation(R_design, atomic_number, computational_method)
+new_E, new_F = AFF.run_physics_baed_calculation(R_val_atom_last[None], atomic_number, computational_method)
+cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
+
+print("current real cost is ",cost)
 print('new_E,new_F ',new_F)
+
+n_loop = 0
+
+while n_loop<3:
+    
+    
+    print('The '+repr(n_loop)+'-th loop \n')
+    
+    n_train = task['R_train'].shape[0]
+    task['R_train'] = np.append(task['R_train'],R_val_atom_last[None]).reshape(n_train+1,12,-1)
+    
+    task['F_train'] = np.append(task['F_train'],new_F).reshape(n_train+1,12,-1)
+    
+    task['E_train'] = np.append(task['E_train'],new_E).reshape(-1,1)
+    
+    trained_model = AFF_train.train(task,sig_candid_F = np.arange(10,100,30))
+    
+    
+    initial=n_train
+    
+    R_design,R_val_atom_last,F_hat,record,cost_SAE = AFF_train.inverseF(task,
+                                                                        trained_model,                                                                
+                                                                        initial,
+                                                                        F_target,
+                                                                        lr=1e-10)
+    
+    print('another one \n')
+    
+    AFF.compile_scirpts_for_physics_based_calculation_IO(R_design)
+    # 
+    # atomic number shall be defined in the beginning of the program once as well
+    atomic_number = dataset['z']
+    # 
+    # for-loop
+    # suggested computational method for H2CO for better reproduction of literature data
+    # computational_method = ['mp2', 'aug-cc-pVTZ']
+    # suggested computational method for uracil
+    computational_method = ['PBE', '6-31G']
+    new_E, new_F = AFF.run_physics_baed_calculation(R_val_atom_last[None], atomic_number, computational_method)
+    cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
+    
+    print("current real cost is ",cost)
+    print('new_E,new_F ',new_F)
+    
+print('-------finished-------- \n')
+
+
+
+
+
+
 #task = np.load('uracil_task.npy',allow_pickle=True).item()
 #trained_model = np.load('uracil_trained_model.npy',allow_pickle = True).item()
 #trained_model = AFF_train.train(task,sig_candid_F = np.arange(10,100,30))
