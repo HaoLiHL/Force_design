@@ -108,6 +108,7 @@ while n_loop<3:
     
     task['E_train'] = np.append(task['E_train'],new_E).reshape(-1,1)
     
+    #AFF_train=AFF.AFFTrain()
     trained_model = AFF_train.train(task,sig_candid_F = np.arange(10,100,30))
     
     

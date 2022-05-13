@@ -24,6 +24,10 @@ import warnings
 
 os.chdir('./')
 
+os.environ["MKL_NUM_THREADS"] = '4'
+os.environ["NUMEXPR_NUM_THREADS"] = '4'
+os.environ["OMP_NUM_THREADS"] = '4'
+
 from utils import io
 #import hashlib
 import numpy as np
