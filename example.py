@@ -125,6 +125,7 @@ while n_loop<20:
                                                                         lr=1e-10)
     
     print('another one \n')
+    print(R_design.shape)
     
     AFF.compile_scirpts_for_physics_based_calculation_IO(R_design)
     # 
