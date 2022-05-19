@@ -1996,8 +1996,7 @@ def run_physics_baed_calculation(R_design, atomic_number, computational_method):
 
                 for i_dimension in range(3):
                     # print(R_design[index_run, 0, i_dimension])
-                    input_write.write("%.8lf\t" % R_design[index_run, index_atom, i_dimension])
-
+                    input_write.write("%.9lf\t" % R_design[index_run, index_atom, i_dimension])
                 input_write.write("\n")
             
             # attention!!!
@@ -2008,12 +2007,14 @@ def run_physics_baed_calculation(R_design, atomic_number, computational_method):
             input_write.write("\n")
             input_write.write("$rem\n")
             input_write.write("jobtype                force\n")
-            input_write.write("exchange               HF\n")
-            input_write.write("correlation            ")
+            input_write.write("exchange               ")
             input_write.write(str(computational_method[0]))
             input_write.write("\n")
-            input_write.write("basis                  ")
+            input_write.write("correlation            ")
             input_write.write(str(computational_method[1]))
+            input_write.write("\n")
+            input_write.write("basis                  ")
+            input_write.write(str(computational_method[2]))
             input_write.write("\n")
             input_write.write("SCF_CONVERGENCE 11\n")
             input_write.write("symmetry false\n")
@@ -2059,7 +2060,7 @@ def run_physics_baed_calculation(R_design, atomic_number, computational_method):
             if computational_method[0] == 'mp2':
                 command_grep_force = ["grep", "-A",  str(math.ceil(num_atoms/6)*4), "\"Full Analytical Gradient of MP2 Energy\"", simulator_output_filename, ">", temp_force_filename]
             elif computational_method[0] == 'PBE':
-                command_grep_force = ["grep", "-A",  str(math.ceil(num_atoms/6)*4), "\"Calculating analytic gradient of the SCF energy\"", simulator_output_filename, ">", temp_force_filename]
+                command_grep_force = ["grep", "-A",  str(math.ceil(num_atoms/6)*4), "\"Gradient of SCF Energy\"", simulator_output_filename, ">", temp_force_filename]
             grep_force = subprocess.Popen(' '.join(command_grep_force), shell=True)
             grep_force.wait()
             command_force_energy = [force_converter_script_path, temp_force_filename, force_filename]

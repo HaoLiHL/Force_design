@@ -5,24 +5,24 @@ from utils import AFF
 # load the dataset contains the geometry information and the force-fields
 
 #dataset=np.load('./dataset/aspirin_ccsd-train.npz')
-dataset=np.load('uracil_dft_mu.npz')
-#dataset=np.load('H2CO_mu.npz')
+#dataset=np.load('uracil_dft_mu.npz')
+dataset=np.load('H2CO_mu.npz')
 AFF_train=AFF.AFFTrain()
 
 n_train=100
 
 #create the task file contains the training, validation and testing dataset 
-# task=AFF_train.create_task(train_dataset=dataset, 
-#                             n_train = n_train ,
-#                             valid_dataset=dataset,
-#                             n_valid=50,
-#                             n_test=50,
-#                             lam = 1e-15)
+task=AFF_train.create_task(train_dataset=dataset, 
+                            n_train = n_train ,
+                            valid_dataset=dataset,
+                            n_valid=50,
+                            n_test=50,
+                            lam = 1e-15)
 #np.save('uracil_task',task)
-task = np.load('uracil_task.npy',allow_pickle=True).item()
-trained_model = np.load('uracil_trained_model.npy',allow_pickle = True).item()
+#task = np.load('uracil_task.npy',allow_pickle=True).item()
+#trained_model = np.load('uracil_trained_model.npy',allow_pickle = True).item()
 # start training the model based on the training dataset
-#trained_model = AFF_train.train(task,sig_candid_F = np.arange(10,100,30))
+trained_model = AFF_train.train(task,sig_candid_F = np.arange(10,100,30))
 #np.save('uracil_trained_model',trained_model)
 # predicted the force-field using the trained_model
 #prediction=AFF_train.predict(task = task, trained_model = trained_model)
@@ -52,11 +52,7 @@ R_design,R_val_atom_last,F_hat,record,cost_SAE = AFF_train.inverseF(task,
                                                                     trained_model,                                                                
                                                                     initial,
                                                                     F_target,
-                                                                    lr=1e-10)
-
-
-
-print('another one \n')
+                                                                    lr=1e-15)
 
 AFF.compile_scirpts_for_physics_based_calculation_IO(R_design)
 # 
@@ -64,18 +60,6 @@ AFF.compile_scirpts_for_physics_based_calculation_IO(R_design)
 atomic_number = dataset['z']
 # 
 # for-loop
-# suggested computational method for H2CO for better reproduction of literature data
-# computational_method = ['HF', 'mp2', 'aug-cc-pVTZ']
-# suggested computational method for uracil
-computational_method = ['PBE', 'PBE', '6-31G']
-new_E, new_F = AFF.run_physics_baed_calculation(task['R_test'][0,:,:][None], atomic_number, computational_method)
-
-
-
-print(np.array(new_F).shape)
-print(new_F.shape)
-cost = np.sum(np.abs(np.concatenate(new_F)))
-
-print("current real cost is ",cost)
+new_E, new_F = AFF.run_physics_baed_calculation(R_design, atomic_number)
 print('new_E,new_F ',new_F)
 
