@@ -100,7 +100,7 @@ print('new_E,new_F ',new_F)
 
 n_loop = 0
 
-while n_loop<3:
+while n_loop<20:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
@@ -140,7 +140,7 @@ while n_loop<3:
     #cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
     cost = np.sum(np.abs(np.concatenate(new_F)))
     print("current real cost is ",cost)
-    print('new_E,new_F ',new_F)
+    #print('new_E,new_F ',new_F)
     
 print('-------finished-------- \n')
 
