@@ -85,8 +85,12 @@ atomic_number = dataset['z']
 # suggested computational method for H2CO for better reproduction of literature data
 # computational_method = ['mp2', 'aug-cc-pVTZ']
 # suggested computational method for uracil
-computational_method = ['PBE', '6-31G']
+
+computational_method = ['PBE', 'PBE', '6-31G']
 new_E, new_F = AFF.run_physics_baed_calculation(R_val_atom_last[None], atomic_number, computational_method)
+
+# computational_method = ['PBE', '6-31G']
+# new_E, new_F = AFF.run_physics_baed_calculation(R_val_atom_last[None], atomic_number, computational_method)
 print(np.array(new_F).shape)
 print(new_F.shape)
 cost = np.sum(np.abs(np.concatenate(new_F)))
@@ -131,7 +135,7 @@ while n_loop<3:
     # suggested computational method for H2CO for better reproduction of literature data
     # computational_method = ['mp2', 'aug-cc-pVTZ']
     # suggested computational method for uracil
-    computational_method = ['PBE', '6-31G']
+    computational_method = ['PBE', 'PBE', '6-31G']
     new_E, new_F = AFF.run_physics_baed_calculation(R_val_atom_last[None], atomic_number, computational_method)
     #cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
     cost = np.sum(np.abs(np.concatenate(new_F)))
