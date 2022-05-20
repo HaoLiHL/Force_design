@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
 	int buffersize = 512;
 	char str[buffersize];
-	int num_atom = 12;
+	int num_atom = NUMATOM;
 
 	FILE *fp1, *fp2;
 

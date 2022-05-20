@@ -59,7 +59,7 @@ F_target=np.zeros((task['R_train'].shape[1],3)).reshape(-1)
 
 #F_target[0]=0
 
-initial=3
+initial=1
 #n_sam=11
 #R_target1=np.empty((n_sam,12,3))
 #F_predict=np.empty((n_sam,12,3))
@@ -126,6 +126,10 @@ while n_loop<20:
     
     print('another one \n')
     print(R_design.shape)
+    if len(R_design)==0:
+        
+        print('Warning! Cannot further reduce the Loss')
+        break
     
     AFF.compile_scirpts_for_physics_based_calculation_IO(R_design)
     # 

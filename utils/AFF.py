@@ -1233,26 +1233,26 @@ class AFFTrain(object):
         #sig_candid1_opt = trained_model['sig_E']
         alphas_opt = trained_model['alpha']
         
-        task = dict(task1)
+        task_c = dict(task1).copy()
         #solver = task['solver_name']
         #batch_size=task['batch_size']
-        n_train, n_atoms = task['R_train'].shape[:2]
+        n_train, n_atoms = task_c['R_train'].shape[:2]
         n_val=1
         desc = Desc(
                 n_atoms,
-                interact_cut_off=task['interact_cut_off'],
+                interact_cut_off=task_c['interact_cut_off'],
                 max_processes=None,
             )
         desc_inv = Desc_inv(
                 n_atoms,
-                interact_cut_off=task['interact_cut_off'],
+                interact_cut_off=task_c['interact_cut_off'],
                 max_processes=None,
             )
-        n_perms = task['perms'].shape[0]  # 12 on benzene
-        tril_perms = np.array([desc.perm(p) for p in task['perms']])
+        n_perms = task_c['perms'].shape[0]  # 12 on benzene
+        tril_perms = np.array([desc.perm(p) for p in task_c['perms']])
 
         #tril_pos=task['perms']
-        index_diff_atom = task['index_diff_atom']
+        index_diff_atom = task_c['index_diff_atom']
         # tril_perms stores the 12 permutations on the 66 descriptor
         dim_i = 3 * n_atoms #36
         dim_d = desc.dim  #66 on benzene
@@ -1261,12 +1261,12 @@ class AFFTrain(object):
         tril_perms_lin = (tril_perms + perm_offsets).flatten('F')
         
           # tril_perms_lin stores a vectorized permuations of all 12 permuations' descriptor position
-        n_type=task['n_type']
+        n_type=task_c['n_type']
         
         lat_and_inv = None
-        R_atom = task['R_train']  #.reshape(n_train, -1) 
+        R_atom = task_c['R_train']  #.reshape(n_train, -1) 
         #R_val_atom=task['R_test'][ind_initial,None] #.reshape(n_val,-1)
-        R_val_atom=task['R_train'][ind_initial,None] #.reshape(n_val,-1)
+        R_val_atom=task_c['R_train'][ind_initial,None] #.reshape(n_val,-1)
         tril_perms_lin_mirror = tril_perms_lin
 
 
@@ -1276,7 +1276,7 @@ class AFFTrain(object):
         for i in range(n_type):
             index=np.array(index_diff_atom[i])
 
-            F_train_atom.append(task['F_train'][:,index,:].reshape(int(n_train*(len(index_diff_atom[i])*3)),order='C'))
+            F_train_atom.append(task_c['F_train'][:,index,:].reshape(int(n_train*(len(index_diff_atom[i])*3)),order='C'))
         cost=5
         cost1=8000
         record=[]
@@ -1315,7 +1315,7 @@ class AFFTrain(object):
             
             #E_train = task['E_train'].ravel().copy()
             #E_val = task['E_test'].ravel().copy()
-            uncertainty=task['uncertainty']
+            uncertainty=task_c['uncertainty']
     
                 
                 
@@ -1371,7 +1371,7 @@ class AFFTrain(object):
      
                 K_r=K_r_all[np.ix_(index_x,index_y)]
                 F_hat_val_i=np.matmul(K_r,np.array(alphas[ind_i]))
-                
+                #print(F_hat_val_i)
                 F_hat[index_diff_atom[ind_i],:]=F_hat_val_i.reshape(len(index_diff_atom[ind_i]),-1).copy()
                 #index_i=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
                 
@@ -1398,6 +1398,8 @@ class AFFTrain(object):
             # delta should be a 3N * 3N matrix, i_th row respresent the gradient w.r.t r_i
             #delta  #
             R_val_atom_last=R_val_atom[0,:,:].copy()
+            
+            #print(R_val_atom_last)
             if cost_SAE>cost_previous:
                 print("return the current best L-2 LOSS",cost_previous)
                 break
@@ -1420,6 +1422,8 @@ class AFFTrain(object):
             #     lr=1e-18
             
             R_val_atom[0,:,:]= R_val_atom_last - drl.reshape(n_atoms,3)*lr
+            #print(drl)
+            
             R_design.append(R_val_atom_last)
             #print(drl.reshape(n_atoms,3)*lr)
             #print(R_val_atom[0,:,:])

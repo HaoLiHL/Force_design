@@ -40,8 +40,12 @@ F_target=np.zeros((task['R_train'].shape[1],3)).reshape(-1)
 #F_target = task["F_train"][4,:,:].reshape(-1)
 
 #F_target[0]=0
+loss = np.sum(np.abs(task['F_train'].reshape(n_train,-1)),1)
+initial = np.where(loss==min(loss))[0][0]
 
-initial=3
+    
+
+initial=1
 #n_sam=11
 #R_target1=np.empty((n_sam,12,3))
 #F_predict=np.empty((n_sam,12,3))
@@ -56,26 +60,26 @@ R_design,R_val_atom_last,F_hat,record,cost_SAE = AFF_train.inverseF(task,
 
 
 
-print('another one \n')
+# print('another one \n')
 
-AFF.compile_scirpts_for_physics_based_calculation_IO(R_design)
-# 
-# atomic number shall be defined in the beginning of the program once as well
-atomic_number = dataset['z']
-# 
-# for-loop
-# suggested computational method for H2CO for better reproduction of literature data
-# computational_method = ['HF', 'mp2', 'aug-cc-pVTZ']
-# suggested computational method for uracil
-computational_method = ['PBE', 'PBE', '6-31G']
-new_E, new_F = AFF.run_physics_baed_calculation(task['R_test'][0,:,:][None], atomic_number, computational_method)
+# AFF.compile_scirpts_for_physics_based_calculation_IO(R_design)
+# # 
+# # atomic number shall be defined in the beginning of the program once as well
+# atomic_number = dataset['z']
+# # 
+# # for-loop
+# # suggested computational method for H2CO for better reproduction of literature data
+# # computational_method = ['HF', 'mp2', 'aug-cc-pVTZ']
+# # suggested computational method for uracil
+# computational_method = ['PBE', 'PBE', '6-31G']
+# new_E, new_F = AFF.run_physics_baed_calculation(task['R_test'][0,:,:][None], atomic_number, computational_method)
 
 
 
-print(np.array(new_F).shape)
-print(new_F.shape)
-cost = np.sum(np.abs(np.concatenate(new_F)))
+# print(np.array(new_F).shape)
+# print(new_F.shape)
+# cost = np.sum(np.abs(np.concatenate(new_F)))
 
-print("current real cost is ",cost)
-print('new_E,new_F ',new_F)
+# print("current real cost is ",cost)
+# print('new_E,new_F ',new_F)
 
