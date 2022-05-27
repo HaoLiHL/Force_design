@@ -1462,7 +1462,7 @@ class AFFTrain(object):
             R_val_atom_last=R_val_atom[0,:,:].copy()
             
             #print(R_val_atom_last)
-            if cost_SAE>cost_previous:
+            if cost_SAE>cost_previous or loss_variance>20:
                 print("return the current best L-2 LOSS",cost_previous)
                 print("the sum of the predictive variance",loss_variance)
                 break
