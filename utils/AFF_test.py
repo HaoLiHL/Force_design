@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Thu May 26 23:18:28 2022
+
+@author: lihao
+"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 Created on Sun May  1 22:26:39 2022
 
 @author: lihao
@@ -1286,18 +1293,13 @@ class AFFTrain(object):
         
         R_design= []
         
-        
-
-        
         while kk<100 and cost_SAE>0.3:
             kk+=1
 
             R_desc_val_atom, R_d_desc_val_atom = desc.from_R(R_val_atom,lat_and_inv=lat_and_inv,
                      callback=None)
             
-            # R_d2_desc_1val_all: d^2 D_ij / dr_ik dr_jk, when k=k
             R_d2_desc_1val_all = np.empty([dim_i,n_val, dim_d, 3])
-            # R_d2_desc_kval_all: d^2 D_ij / dr_ik dr_jl, when l != k
             R_d2_desc_kval_all = np.empty([dim_i,n_val, dim_d, 3])
             
             for i in range(dim_i): ### can be improved later
@@ -1347,40 +1349,6 @@ class AFFTrain(object):
                     callback=None,
                 )
             
-            
-            # for uncertain, K_r_all_val is the c(x^*,x^*)
-            K_r_all_val,tem=self._assemble_kernel_mat(
-                index_diff_atom,
-                R_desc_val_atom1,
-                R_d_desc_val_atom1,
-                tril_perms_lin,
-                tril_perms_lin_mirror,
-                sig_optim,
-                desc,
-                use_E_cstr=False,
-                col_idxs=np.s_[:],
-                callback=None,
-               
-            )
-            
-            # for uncertain, K_all is the R
-
-            K_all,tem=self._assemble_kernel_mat(
-                index_diff_atom,
-                R_desc_atom,
-                R_d_desc_atom,
-                tril_perms_lin,
-                tril_perms_lin_mirror,
-                sig_optim,
-                desc,
-                use_E_cstr=False,
-                col_idxs=np.s_[:],
-                callback=None,
-            )
-            
-            
-            
-            
             delta=self._delta(
                 R_desc_atom,
                 R_d_desc_atom,
@@ -1401,12 +1369,7 @@ class AFFTrain(object):
             F_hat=np.empty([n_atoms,3])
             
             drl=np.zeros([3*n_atoms])
-            
-            # summation of the predictive variance             
-            loss_variance = 0
-            
             for ind_i in range(n_type):
-                
                 index_eg=np.tile(np.arange(3),len(index_diff_atom[ind_i]))+3*np.repeat(index_diff_atom[ind_i],3)
     
                 index_x=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
@@ -1418,22 +1381,6 @@ class AFFTrain(object):
                 #print(F_hat_val_i)
                 F_hat[index_diff_atom[ind_i],:]=F_hat_val_i.reshape(len(index_diff_atom[ind_i]),-1).copy()
                 #index_i=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
-                
-                # add uncertainty
-                
-                lam=task1['lam']
-                R=K_all[np.ix_(index_y,index_y)]
-                R[np.diag_indices_from(R)] += lam
-                L, lower = sp.linalg.cho_factor(
-                            R, overwrite_a=True, check_finite=False
-                        )
-                R_inv_r = sp.linalg.cho_solve(
-                            (L, lower), K_r.T
-                        )
-                K_star_star = K_r_all_val[np.ix_(index_x,index_x)]-np.matmul(K_r,R_inv_r)
-                S2 = np.matmul(np.array(F_train_atom[ind_i]),np.array(alphas[ind_i]))/(n_train*3*len(index_diff_atom[ind_i]))
-                
-                loss_variance += np.sum(np.diag(K_star_star*S2)) 
                 
                 for l in range(dim_i):
                     delta_l=delta[l,:,:].copy()
@@ -1448,9 +1395,7 @@ class AFFTrain(object):
                 #F_star[index_i]=F_hat_val_i
                 
                       #a=(np.concatenate(F_star_L)<=np.concatenate(F_val_atom) and np.concatenate(F_star_H)>=np.concatenate(F_val_atom))
-            cost_SAE=np.sum(np.abs(np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target))) + loss_variance
-            
-            
+            cost_SAE=np.sum(np.abs(np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target)))
             # L-2 LOSS
            # cost_SAE=np.sum((  np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target))**2) 
             
@@ -1464,7 +1409,6 @@ class AFFTrain(object):
             #print(R_val_atom_last)
             if cost_SAE>cost_previous:
                 print("return the current best L-2 LOSS",cost_previous)
-                print("the sum of the predictive variance",loss_variance)
                 break
                 
             
@@ -1472,12 +1416,11 @@ class AFFTrain(object):
             
             #RMSE_F=np.sqrt(np.mean((np.concatenate(F_hat_val_F)-np.concatenate(F_val_atom))**2))/np.std(np.concatenate(F_val_atom))
             print(' the cost is '+repr(cost_SAE)) 
-            print(" the sum of the predictive variance"+repr(loss_variance)+'\n')
             record.append(cost_SAE)
             #print(drl)
             #print(' the mean of drl is '+repr(np.max(np.abs(drl))))
             cost_previous = cost_SAE
-            #dy_lr=1/np.max(np.abs(drl))* 1e-2
+            dy_lr=1/np.max(np.abs(drl))* 1e-2
             #print(np.concatenat(F_hat_val_F))
             #R_val_atom+=lr
             # if cost1<8000:
@@ -1498,298 +1441,6 @@ class AFFTrain(object):
         #MAE=ae
 
         return np.array(R_design),R_val_atom_last,F_hat,record,cost_SAE
-    
-#    def _loss(self,)
-    def inverseF_test(self, task1,trained_model,ind_initial,F_target,lr,
-            cprsn_callback=None,
-            save_progr_callback=None,  # TODO: document me
-            callback=None):
-        
-        # everytime after call this funciton , the result returned from the train() function will change 2022/05/05
-        sig_optim = trained_model['sig_F']
-        #sig_candid1_opt = trained_model['sig_E']
-        alphas_opt = trained_model['alpha']
-        
-        task_c = dict(task1).copy()
-        #solver = task['solver_name']
-        #batch_size=task['batch_size']
-        n_train, n_atoms = task_c['R_train'].shape[:2]
-        n_val=1
-        desc = Desc(
-                n_atoms,
-                interact_cut_off=task_c['interact_cut_off'],
-                max_processes=None,
-            )
-        desc_inv = Desc_inv(
-                n_atoms,
-                interact_cut_off=task_c['interact_cut_off'],
-                max_processes=None,
-            )
-        n_perms = task_c['perms'].shape[0]  # 12 on benzene
-        tril_perms = np.array([desc.perm(p) for p in task_c['perms']])
-
-        #tril_pos=task['perms']
-        index_diff_atom = task_c['index_diff_atom']
-        # tril_perms stores the 12 permutations on the 66 descriptor
-        dim_i = 3 * n_atoms #36
-        dim_d = desc.dim  #66 on benzene
-        perm_offsets = np.arange(n_perms)[:, None] * dim_d
-        # perm_offsets a [12,1] matrix stores the [0, 66, 66*2, ..., 12*66]
-        tril_perms_lin = (tril_perms + perm_offsets).flatten('F')
-        
-          # tril_perms_lin stores a vectorized permuations of all 12 permuations' descriptor position
-        n_type=task_c['n_type']
-        
-        lat_and_inv = None
-        R_atom = task_c['R_train']  #.reshape(n_train, -1) 
-        #R_val_atom=task['R_test'][ind_initial,None] #.reshape(n_val,-1)
-        R_val_atom=task_c['R_train'][ind_initial,None] #.reshape(n_val,-1)
-        tril_perms_lin_mirror = tril_perms_lin
-
-
-        R_desc_atom, R_d_desc_atom = desc.from_R(R_atom,lat_and_inv=lat_and_inv,
-                callback=None)
-        F_train_atom=[]
-        for i in range(n_type):
-            index=np.array(index_diff_atom[i])
-
-            F_train_atom.append(task_c['F_train'][:,index,:].reshape(int(n_train*(len(index_diff_atom[i])*3)),order='C'))
-        cost=5
-        cost1=8000
-        record=[]
-        kk=1
-        cost_SAE=1000
-        cost_previous = cost_SAE
-        
-        R_design= []
-        
-        def loss_fun(R_input):
-            R_desc_val_atom, R_d_desc_val_atom = desc.from_R(R_input,lat_and_inv=lat_and_inv,
-                     callback=None)
-            
-            R_d2_desc_1val_all = np.empty([dim_i,n_val, dim_d, 3])
-            R_d2_desc_kval_all = np.empty([dim_i,n_val, dim_d, 3])
-            
-            for i in range(dim_i): ### can be improved later
-                R_d2_desc_1val_all[i,:,:,:], R_d2_desc_kval_all[i,:,:,:] = desc_inv.from_R(R_val_atom,index_i=i,lat_and_inv=lat_and_inv,
-                    callback=None)
-                   
-            R_desc_val_atom1=R_desc_val_atom[None]
-            R_d_desc_val_atom1=R_d_desc_val_atom[None]
-            
-        
-            uncertainty=task_c['uncertainty']
-    
-            alphas=alphas_opt
-            
-    
-            F_hat_val_F=[]
-            F_hat_val_target=[]
-            #F_hat_val_E=[]
-    
-            K_r_all = self._assemble_kernel_mat_test(
-                    index_diff_atom,
-                    R_desc_atom,
-                    R_d_desc_atom,
-                    R_desc_val_atom1,
-                    R_d_desc_val_atom1,
-                    tril_perms_lin,
-                    tril_perms_lin_mirror,
-                    sig_optim,
-                    desc,
-                    use_E_cstr=False,
-                    col_idxs= np.s_[:],
-                    callback=None,
-                )
-            
-            
-            # for uncertain, K_r_all_val is the c(x^*,x^*)
-            K_r_all_val,tem=self._assemble_kernel_mat(
-                index_diff_atom,
-                R_desc_val_atom1,
-                R_d_desc_val_atom1,
-                tril_perms_lin,
-                tril_perms_lin_mirror,
-                sig_optim,
-                desc,
-                use_E_cstr=False,
-                col_idxs=np.s_[:],
-                callback=None,
-               
-            )
-            
-            # for uncertain, K_all is the R
-
-            K_all,tem=self._assemble_kernel_mat(
-                index_diff_atom,
-                R_desc_atom,
-                R_d_desc_atom,
-                tril_perms_lin,
-                tril_perms_lin_mirror,
-                sig_optim,
-                desc,
-                use_E_cstr=False,
-                col_idxs=np.s_[:],
-                callback=None,
-            )
-            
-            F_hat=np.empty([n_atoms,3])
-            
-            drl=np.zeros([3*n_atoms])
-            
-            # summation of the predictive variance             
-            loss_variance = 0
-            
-            for ind_i in range(n_type):
-                
-                index_eg=np.tile(np.arange(3),len(index_diff_atom[ind_i]))+3*np.repeat(index_diff_atom[ind_i],3)
-    
-                index_x=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
-                index_y=np.repeat(np.arange(n_train)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_train)
-    
-     
-                K_r=K_r_all[np.ix_(index_x,index_y)]
-                F_hat_val_i=np.matmul(K_r,np.array(alphas[ind_i]))
-                #print(F_hat_val_i)
-                F_hat[index_diff_atom[ind_i],:]=F_hat_val_i.reshape(len(index_diff_atom[ind_i]),-1).copy()
-                #index_i=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
-                
-                # add uncertainty
-                
-                lam=task1['lam']
-                R=K_all[np.ix_(index_y,index_y)]
-                R[np.diag_indices_from(R)] += lam
-                L, lower = sp.linalg.cho_factor(
-                            R, overwrite_a=True, check_finite=False
-                        )
-                R_inv_r = sp.linalg.cho_solve(
-                            (L, lower), K_r.T
-                        )
-                K_star_star = K_r_all_val[np.ix_(index_x,index_x)]-np.matmul(K_r,R_inv_r)
-                S2 = np.matmul(np.array(F_train_atom[ind_i]),np.array(alphas[ind_i]))/(n_train*3*len(index_diff_atom[ind_i]))
-                
-                loss_variance += np.sum(np.diag(K_star_star*S2)) 
-                
-              
-                F_hat_val_F.append(F_hat_val_i)
-                F_hat_val_target.append(F_target[index_eg])
-                #F_hat_val_F.append(F_hat_val_i)
-                #F_star[index_i]=F_hat_val_i
-                
-                      #a=(np.concatenate(F_star_L)<=np.concatenate(F_val_atom) and np.concatenate(F_star_H)>=np.concatenate(F_val_atom))
-            cost_SAE=np.sum(np.abs(np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target))) + loss_variance
-            print(cost_SAE)
-            return cost_SAE
-        
-        def jacob_loss(R_input):
-            R_desc_val_atom, R_d_desc_val_atom = desc.from_R(R_input,lat_and_inv=lat_and_inv,
-                     callback=None)
-            
-            R_d2_desc_1val_all = np.empty([dim_i,n_val, dim_d, 3])
-            R_d2_desc_kval_all = np.empty([dim_i,n_val, dim_d, 3])
-            
-            for i in range(dim_i): ### can be improved later
-                R_d2_desc_1val_all[i,:,:,:], R_d2_desc_kval_all[i,:,:,:] = desc_inv.from_R(R_val_atom,index_i=i,lat_and_inv=lat_and_inv,
-                    callback=None)
-                   
-            R_desc_val_atom1=R_desc_val_atom[None]
-            R_d_desc_val_atom1=R_d_desc_val_atom[None]
-            
-        
-            uncertainty=task_c['uncertainty']
-    
-            alphas=alphas_opt
-            
-    
-            F_hat_val_F=[]
-            F_hat_val_target=[]
-            #F_hat_val_E=[]
-    
-            K_r_all = self._assemble_kernel_mat_test(
-                    index_diff_atom,
-                    R_desc_atom,
-                    R_d_desc_atom,
-                    R_desc_val_atom1,
-                    R_d_desc_val_atom1,
-                    tril_perms_lin,
-                    tril_perms_lin_mirror,
-                    sig_optim,
-                    desc,
-                    use_E_cstr=False,
-                    col_idxs= np.s_[:],
-                    callback=None,
-                )
-            
-            
-            # for uncertain, K_r_all_val is the c(x^*,x^*)
-           
-            
-            F_hat=np.empty([n_atoms,3])
-            
-            drl=np.zeros([3*n_atoms])
-            
-            # summation of the predictive variance             
-            delta=self._delta(
-                R_desc_atom,
-                R_d_desc_atom,
-                R_desc_val_atom1,
-                R_d_desc_val_atom1,
-                R_d2_desc_1val_all,
-                R_d2_desc_kval_all,
-                #R_d2_desc_1val[None], 
-                #R_d2_desc_kval[None],
-                tril_perms_lin,
-                tril_perms_lin_mirror,
-                sig_optim,
-                desc,
-                desc_inv,
-                index_diff_atom)
-            
-            #F_star=np.empty([n_val*3*n_atoms])
-            F_hat=np.empty([n_atoms,3])
-            
-            drl=np.zeros([3*n_atoms])
-            
-            # summation of the predictive variance             
-            loss_variance = 0
-            
-            for ind_i in range(n_type):
-                
-                index_eg=np.tile(np.arange(3),len(index_diff_atom[ind_i]))+3*np.repeat(index_diff_atom[ind_i],3)
-    
-                index_x=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
-                index_y=np.repeat(np.arange(n_train)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_train)
-    
-     
-                K_r=K_r_all[np.ix_(index_x,index_y)]
-                F_hat_val_i=np.matmul(K_r,np.array(alphas[ind_i]))
-                #print(F_hat_val_i)
-                F_hat[index_diff_atom[ind_i],:]=F_hat_val_i.reshape(len(index_diff_atom[ind_i]),-1).copy()
-                #index_i=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
-                
-                # add uncertainty
-                
-            
-                
-                for l in range(dim_i):
-                    delta_l=delta[l,:,:].copy()
-                    
-                    dF_drl = np.matmul(delta_l[np.ix_(index_x,index_y)],np.array(alphas[ind_i]))
-                    drl[l] += np.matmul(2*(F_hat_val_i-F_target[index_eg]),dF_drl)
-            return drl
-    
-            
-        
-        from scipy.optimize import minimize
-        
-        x0=task_c['R_train'][ind_initial,None]
-        res = minimize(loss_fun,x0,method = 'BFGS',jac=jacob_loss,options={'disp':True})
-        #res = minimize(loss_fun,x0,method = 'trust-ncg',options={'gtol':1e-8,'disp':True})
-           
-            
-
-        return 0
-   
 
     def _delta(
             self, 
@@ -1843,8 +1494,6 @@ class AFFTrain(object):
         
         i=0
         ri_d_desc = np.zeros((1, dim_d, dim_i))
-        
-        # ri_d2_desc :  (3N * 1 * N^2 * 3N)    \partial^2 D_11/ \partial r1' \partial rl' 
         ri_d2_desc = np.zeros((dim_i,1, dim_d, dim_i))
         desc_func.d_desc_from_comp(R_d_desc_val[i, :, :], out=ri_d_desc)
         for index_i in range(dim_i): 
@@ -1906,6 +1555,7 @@ class AFFTrain(object):
             
             coeff1 = np.array([0 if val ==0 else -25.0*sqrt5/(3* sig_pow5 * val) for val in d])
             coeff4 = np.array([(25+25*val)/(3*sig_pow4) if val ==0 else (-5.0*sqrt5 /(val* sig_pow3) +5.0*sqrt5/( sig_pow3)+(25+25*val)/(3*sig_pow4)) for val in d])
+            
             
             
             
@@ -2451,5 +2101,4 @@ def run_physics_baed_calculation(R_design, atomic_number, computational_method):
     return E_new_simulation, F_new_simulation
   
   
-
 

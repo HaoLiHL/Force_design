@@ -59,20 +59,24 @@ F_target=np.zeros((task['R_train'].shape[1],3)).reshape(-1)
 
 #F_target[0]=0
 
-initial=1
+initial=0
 #n_sam=11
 #R_target1=np.empty((n_sam,12,3))
 #F_predict=np.empty((n_sam,12,3))
 #cost=np.empty((n_sam,1))
 
 #np.array(R_design),R_val_atom_last,F_hat,record,cost_SAE
+# R_design,R_val_atom_last,F_hat,record,cost_SAE = AFF_train.inverseF_test(task,
+#                                                                     trained_model,                                                                
+#                                                                     initial,
+#                                                                     F_target,
+#                                                                     lr=1e-10)
+
 R_design,R_val_atom_last,F_hat,record,cost_SAE = AFF_train.inverseF(task,
                                                                     trained_model,                                                                
                                                                     initial,
                                                                     F_target,
                                                                     lr=1e-10)
-
-
 
 print('another one \n')
 
@@ -154,11 +158,11 @@ print('-------finished-------- \n')
 
 
 
-#task = np.load('uracil_task.npy',allow_pickle=True).item()
-#trained_model = np.load('uracil_trained_model.npy',allow_pickle = True).item()
-#trained_model = AFF_train.train(task,sig_candid_F = np.arange(10,100,30))
-# R_design,R_val_atom_last,F_hat,record,cost_SAE = AFF_train.inverseF(task,
-#                                                                     trained_model,                                                                
-#                                                                     initial,
-#                                                                     F_target,
-#                                                                     lr=1e-11)
+# #task = np.load('uracil_task.npy',allow_pickle=True).item()
+# #trained_model = np.load('uracil_trained_model.npy',allow_pickle = True).item()
+# #trained_model = AFF_train.train(task,sig_candid_F = np.arange(10,100,30))
+# # R_design,R_val_atom_last,F_hat,record,cost_SAE = AFF_train.inverseF(task,
+# #                                                                     trained_model,                                                                
+# #                                                                     initial,
+# #                                                                     F_target,
+# #                                                                     lr=1e-11)
