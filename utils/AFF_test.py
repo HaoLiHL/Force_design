@@ -1229,6 +1229,316 @@ class AFFTrain(object):
        
         return prediction
     
+    def inverseF_test(self, task1,trained_model,ind_initial,F_target,lr,
+            cprsn_callback=None,
+            save_progr_callback=None,  # TODO: document me
+            callback=None):
+        
+        # everytime after call this funciton , the result returned from the train() function will change 2022/05/05
+        sig_optim = trained_model['sig_F']
+        #sig_candid1_opt = trained_model['sig_E']
+        alphas_opt = trained_model['alpha']
+        
+        task_c = dict(task1).copy()
+        #solver = task['solver_name']
+        #batch_size=task['batch_size']
+        n_train, n_atoms = task_c['R_train'].shape[:2]
+        n_val=1
+        desc = Desc(
+                n_atoms,
+                interact_cut_off=task_c['interact_cut_off'],
+                max_processes=None,
+            )
+        desc_inv = Desc_inv(
+                n_atoms,
+                interact_cut_off=task_c['interact_cut_off'],
+                max_processes=None,
+            )
+        n_perms = task_c['perms'].shape[0]  # 12 on benzene
+        tril_perms = np.array([desc.perm(p) for p in task_c['perms']])
+
+        #tril_pos=task['perms']
+        index_diff_atom = task_c['index_diff_atom']
+        # tril_perms stores the 12 permutations on the 66 descriptor
+        dim_i = 3 * n_atoms #36
+        dim_d = desc.dim  #66 on benzene
+        perm_offsets = np.arange(n_perms)[:, None] * dim_d
+        # perm_offsets a [12,1] matrix stores the [0, 66, 66*2, ..., 12*66]
+        tril_perms_lin = (tril_perms + perm_offsets).flatten('F')
+        
+          # tril_perms_lin stores a vectorized permuations of all 12 permuations' descriptor position
+        n_type=task_c['n_type']
+        
+        lat_and_inv = None
+        R_atom = task_c['R_train']  #.reshape(n_train, -1) 
+        #R_val_atom=task['R_test'][ind_initial,None] #.reshape(n_val,-1)
+        R_val_atom=task_c['R_train'][ind_initial,None] #.reshape(n_val,-1)
+        tril_perms_lin_mirror = tril_perms_lin
+
+
+        R_desc_atom, R_d_desc_atom = desc.from_R(R_atom,lat_and_inv=lat_and_inv,
+                callback=None)
+        F_train_atom=[]
+        for i in range(n_type):
+            index=np.array(index_diff_atom[i])
+
+            F_train_atom.append(task_c['F_train'][:,index,:].reshape(int(n_train*(len(index_diff_atom[i])*3)),order='C'))
+        cost=5
+        cost1=8000
+        record=[]
+        kk=1
+        cost_SAE=1000
+        cost_previous = cost_SAE
+        
+        R_design= []
+        
+        
+
+        
+        while kk<100 and cost_SAE>0.3:
+            kk+=1
+
+            R_desc_val_atom, R_d_desc_val_atom = desc.from_R(R_val_atom,lat_and_inv=lat_and_inv,
+                     callback=None)
+            
+            # R_d2_desc_1val_all: d^2 D_ij / dr_ik dr_jk, when k=k
+            R_d2_desc_1val_all = np.empty([dim_i,n_val, dim_d, 3])
+            # R_d2_desc_kval_all: d^2 D_ij / dr_ik dr_jl, when l != k
+            R_d2_desc_kval_all = np.empty([dim_i,n_val, dim_d, 3])
+            
+            for i in range(dim_i): ### can be improved later
+                R_d2_desc_1val_all[i,:,:,:], R_d2_desc_kval_all[i,:,:,:] = desc_inv.from_R(R_val_atom,index_i=i,lat_and_inv=lat_and_inv,
+                    callback=None)
+                
+            # R_d2_desc_1val, R_d2_desc_kval = desc_inv.from_R(R_val_atom,index_i=0,lat_and_inv=lat_and_inv,
+            #         callback=None)
+            
+            #r_val_d2_desc = np.empty()
+            #r_val_d2_desc=desc_inv.d2_desc_from_comp(R_d2_desc_1val, R_d2_desc_kval ,0)
+            
+            R_desc_val_atom1=R_desc_val_atom[None]
+            R_d_desc_val_atom1=R_d_desc_val_atom[None]
+            
+            
+           
+            #F_val_atom=[]
+                #F_val_atom=task['F_val'].ravel().copy()
+            
+            #E_train = task['E_train'].ravel().copy()
+            #E_val = task['E_test'].ravel().copy()
+            uncertainty=task_c['uncertainty']
+    
+                
+                
+            #print('This is tesing task : sigma='+repr(sig_optim))
+            alphas=alphas_opt
+            
+    
+            F_hat_val_F=[]
+            F_hat_val_target=[]
+            #F_hat_val_E=[]
+    
+            K_r_all = self._assemble_kernel_mat_test(
+                    index_diff_atom,
+                    R_desc_atom,
+                    R_d_desc_atom,
+                    R_desc_val_atom1,
+                    R_d_desc_val_atom1,
+                    tril_perms_lin,
+                    tril_perms_lin_mirror,
+                    sig_optim,
+                    desc,
+                    use_E_cstr=False,
+                    col_idxs= np.s_[:],
+                    callback=None,
+                )
+            
+            
+            # for uncertain, K_r_all_val is the c(x^*,x^*)
+            K_r_all_val,tem=self._assemble_kernel_mat(
+                index_diff_atom,
+                R_desc_val_atom1,
+                R_d_desc_val_atom1,
+                tril_perms_lin,
+                tril_perms_lin_mirror,
+                sig_optim,
+                desc,
+                use_E_cstr=False,
+                col_idxs=np.s_[:],
+                callback=None,
+               
+            )
+            
+            # for uncertain, K_all is the R
+
+            K_all,tem=self._assemble_kernel_mat(
+                index_diff_atom,
+                R_desc_atom,
+                R_d_desc_atom,
+                tril_perms_lin,
+                tril_perms_lin_mirror,
+                sig_optim,
+                desc,
+                use_E_cstr=False,
+                col_idxs=np.s_[:],
+                callback=None,
+            )
+            
+            
+            
+            
+            delta=self._delta(
+                R_desc_atom,
+                R_d_desc_atom,
+                R_desc_val_atom1,
+                R_d_desc_val_atom1,
+                R_d2_desc_1val_all,
+                R_d2_desc_kval_all,
+                #R_d2_desc_1val[None], 
+                #R_d2_desc_kval[None],
+                tril_perms_lin,
+                tril_perms_lin_mirror,
+                sig_optim,
+                desc,
+                desc_inv,
+                index_diff_atom)
+            
+            #F_star=np.empty([n_val*3*n_atoms])
+            F_hat=np.empty([n_atoms,3])
+            
+            drl=np.zeros([3*n_atoms])
+            drl_var_part2=np.zeros([3*n_atoms])
+            
+            
+            drl_var_part1 = self._delta_var(
+                R_desc_atom,
+                R_d_desc_atom,
+                R_desc_val_atom1,
+                R_d_desc_val_atom1,
+                R_d2_desc_1val_all,
+                R_d2_desc_kval_all,
+                #R_d2_desc_1val[None], 
+                #R_d2_desc_kval[None],
+                tril_perms_lin,
+                tril_perms_lin_mirror,
+                sig_optim,
+                desc,
+                desc_inv,
+                index_diff_atom)
+            
+            # summation of the predictive variance             
+            loss_variance = 0
+            
+            for ind_i in range(n_type):
+                
+                n_li = len(index_diff_atom[ind_i])
+                index_eg=np.tile(np.arange(3),len(index_diff_atom[ind_i]))+3*np.repeat(index_diff_atom[ind_i],3)
+    
+                index_x=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
+                index_y=np.repeat(np.arange(n_train)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_train)
+    
+     
+                K_r=K_r_all[np.ix_(index_x,index_y)]
+                F_hat_val_i=np.matmul(K_r,np.array(alphas[ind_i]))
+                #print(F_hat_val_i)
+                F_hat[index_diff_atom[ind_i],:]=F_hat_val_i.reshape(len(index_diff_atom[ind_i]),-1).copy()
+                #index_i=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
+                
+                # add uncertainty
+                
+                lam=task1['lam']
+                R=K_all[np.ix_(index_y,index_y)]
+                R[np.diag_indices_from(R)] += lam
+                L, lower = sp.linalg.cho_factor(
+                            R, overwrite_a=True, check_finite=False
+                        )
+                R_inv_r = sp.linalg.cho_solve(
+                            (L, lower), K_r.T
+                        )
+                K_star_star = K_r_all_val[np.ix_(index_x,index_x)]-np.matmul(K_r,R_inv_r)
+                S2 = np.matmul(np.array(F_train_atom[ind_i]),np.array(alphas[ind_i]))/(n_train*3*len(index_diff_atom[ind_i]))
+                
+                loss_variance += np.sum(np.diag(K_star_star*S2)) 
+                
+                for l in range(dim_i):
+                    delta_l=delta[l,:,:].copy()
+                    
+                    dF_drl = np.matmul(delta_l[np.ix_(index_x,index_y)],np.array(alphas[ind_i]))
+                    drl[l] += np.matmul(2*(F_hat_val_i-F_target[index_eg]),dF_drl)
+                
+                for l1 in range(3*n_li):
+                    
+                    delta_l=delta[index_eg[l1],:,:].copy()
+                    
+                    R_x_star_l = K_r[l1,:].T
+                    
+  
+                    R_inv_R_x_star_l = sp.linalg.cho_solve(
+                                (L, lower), R_x_star_l
+                            )
+                    
+                    
+                    drl_var_part2 += 2 * S2 * np.matmul(delta_l[:,index_y],R_inv_R_x_star_l)
+                    
+    
+                F_hat_val_F.append(F_hat_val_i)
+                F_hat_val_target.append(F_target[index_eg])
+                #F_hat_val_F.append(F_hat_val_i)
+                #F_star[index_i]=F_hat_val_i
+                
+                      #a=(np.concatenate(F_star_L)<=np.concatenate(F_val_atom) and np.concatenate(F_star_H)>=np.concatenate(F_val_atom))
+            cost_SAE=np.sum(np.abs(np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target))) + loss_variance
+            
+            
+            # L-2 LOSS
+           # cost_SAE=np.sum((  np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target))**2) 
+            
+            #cost-=1
+            #F_diff= (np.concatenate(F_hat_val_F)-np.concatenate(F_val_atom)) ### 3N vector of Fij- Fij_tilde
+        
+            # delta should be a 3N * 3N matrix, i_th row respresent the gradient w.r.t r_i
+            #delta  #
+            R_val_atom_last=R_val_atom[0,:,:].copy()
+            
+            #print(R_val_atom_last)
+            if cost_SAE>cost_previous or loss_variance>20:
+                print("return the current best L-2 LOSS",cost_previous)
+                print("the sum of the predictive variance",loss_variance)
+                break
+                
+            
+            
+            
+            #RMSE_F=np.sqrt(np.mean((np.concatenate(F_hat_val_F)-np.concatenate(F_val_atom))**2))/np.std(np.concatenate(F_val_atom))
+            print(' the cost is '+repr(cost_SAE)) 
+            print(" the sum of the predictive variance"+repr(loss_variance)+'\n')
+            record.append(cost_SAE)
+            #print(drl)
+            #print(' the mean of drl is '+repr(np.max(np.abs(drl))))
+            cost_previous = cost_SAE
+            #dy_lr=1/np.max(np.abs(drl))* 1e-2
+            #print(np.concatenat(F_hat_val_F))
+            #R_val_atom+=lr
+            # if cost1<8000:
+            #     lr=1e-17
+            # if cost1<24356:
+            #     lr=1e-18
+            
+            drl_var = drl_var_part2 + drl_var_part1
+            R_val_atom[0,:,:]= R_val_atom_last - drl.reshape(n_atoms,3)*lr - drl_var.reshape(n_atoms,3)*lr
+            #print(drl)
+            
+            R_design.append(R_val_atom_last)
+            #print(drl.reshape(n_atoms,3)*lr)
+            #print(R_val_atom[0,:,:])
+        
+        #print(' This is the  RMSE of F='+repr(RMSE_F)) 
+        
+
+        #MAE=ae
+
+        return np.array(R_design),R_val_atom_last,F_hat,record,cost_SAE
+    
     
     def inverseF(self, task1,trained_model,ind_initial,F_target,lr,
             cprsn_callback=None,
@@ -1349,6 +1659,21 @@ class AFFTrain(object):
                     callback=None,
                 )
             
+            K_all,tem=self._assemble_kernel_mat(
+                index_diff_atom,
+                R_desc_atom,
+                R_d_desc_atom,
+                tril_perms_lin,
+                tril_perms_lin_mirror,
+                sig_optim,
+                desc,
+                use_E_cstr=False,
+                col_idxs=np.s_[:],
+                callback=None,
+               
+            )
+            
+            # delta 3N * 3N * 3MN 
             delta=self._delta(
                 R_desc_atom,
                 R_d_desc_atom,
@@ -1365,11 +1690,18 @@ class AFFTrain(object):
                 desc_inv,
                 index_diff_atom)
             
+            
+  
             #F_star=np.empty([n_val*3*n_atoms])
             F_hat=np.empty([n_atoms,3])
             
             drl=np.zeros([3*n_atoms])
+            
+            drl_var=np.zeros([3*n_atoms])
             for ind_i in range(n_type):
+                
+                #uracil: [0,1,2]
+                n_li = len(index_diff_atom[ind_i])
                 index_eg=np.tile(np.arange(3),len(index_diff_atom[ind_i]))+3*np.repeat(index_diff_atom[ind_i],3)
     
                 index_x=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
@@ -1387,6 +1719,13 @@ class AFFTrain(object):
                     
                     dF_drl = np.matmul(delta_l[np.ix_(index_x,index_y)],np.array(alphas[ind_i]))
                     drl[l] += np.matmul(2*(F_hat_val_i-F_target[index_eg]),dF_drl)
+                    
+                    # the gradient of second part of the c^*(x^*, x^*)
+                    
+                    
+                    
+        
+                  
                 
     
                 F_hat_val_F.append(F_hat_val_i)
@@ -1608,6 +1947,77 @@ class AFFTrain(object):
                 K[index_i,blk_i, blk_j] = -k.copy()
             
         return K
+    
+    def _delta_var(
+            self, 
+            R_desc,
+            R_d_desc,
+            R_desc_val,
+            R_d_desc_val,
+            R_d2_desc_1val_all, 
+            R_d2_desc_kval_all,
+            tril_perms_lin,
+            tril_perms_lin_mirror,
+            sig,
+            desc,
+            desc_inv,
+            index_diff_atom):
+       
+        n_val=1
+        n_train, dim_d = R_d_desc.shape[:2]  #R_d_desc.shape (n_train, 66, 3)
+        #n_train , dim_d 66
+        dim_i = 3 * int((1 + np.sqrt(8 * dim_d + 1)) / 2)  # dim = 3 * 12
+    
+        
+        #K = np.frombuffer(glob['K']).reshape(glob['K_shape'])
+        K = np.empty((dim_i,dim_i,n_train*dim_i)) # the first dim_i is for index_i
+        desc_func = desc
+        desc_func_inv = desc_inv
+        n_type=len(index_diff_atom)
+        
+        dim_d = R_d_desc.shape[1]
+        #n_val, dim_d = R_d_desc_val.shape[:2]
+        # dim_d =66
+    
+        n_atoms = int((1 + np.sqrt(8 * dim_d + 1)) / 2)
+ 
+        n_perms = int(len(tril_perms_lin) / dim_d)
+        n_perm_atom=n_perms
+        
+        #mat52_base_div = 3 * sig ** 4
+        sqrt5 = np.sqrt(5.0)
+        sig_pow2 = sig ** 2
+        sig_pow3 = sig ** 3
+        sig_pow4 = sig ** 4
+        sig_pow5 = sig ** 5
+        
+        i=0
+        ri_d_desc = np.zeros((1, dim_d, dim_i))
+        ri_d2_desc = np.zeros((dim_i,1, dim_d, dim_i))
+        desc_func.d_desc_from_comp(R_d_desc_val[i, :, :], out=ri_d_desc)
+        
+        ri_d_desc_perms = np.reshape(
+            np.tile(ri_d_desc.T, n_perm_atom)[:, tril_perms_lin_mirror], (-1, dim_d, n_perm_atom)
+        )  # 36 * 66 * 12
+        for index_i in range(dim_i): 
+            desc_func_inv.d2_desc_from_comp( R_d2_desc_1val_all[index_i,i,:,:], R_d2_desc_kval_all[index_i,i,:,:], index_i,out=ri_d2_desc[index_i,i,:,:])
+        
+        delta_c_x_x_dr = np.zeros([1,dim_i])
+        for index_i in range(dim_i):
+            
+            # N^2 * 1 
+            d_Dij_d_rk = ri_d_desc[0,:,index_i]
+            
+            # 1* 66 * 36
+            d_2_Dij_drk_dr = ri_d2_desc[index_i,0,:,:]
+            
+            # the \partial c(x^*,x^*)_kk / \partial r  , which is a 3N vector , first part
+            # I think we need to times n_perms below
+            delta_c_x_x_dr += 2 * 5/3 * sig_pow3 * np.matmul( d_2_Dij_drk_dr.T, d_Dij_d_rk) * n_perms
+            
+    
+            
+        return delta_c_x_x_dr
             
    
   
