@@ -122,7 +122,7 @@ while n_loop<20:
     
     initial=n_train
     
-    R_design,R_val_atom_last,F_hat,record,cost_SAE = AFF_train.inverseF(task,
+    R_design,R_val_atom_last,F_hat,record,cost_SAE = AFF_train.inverseF_test(task,
                                                                         trained_model,                                                                
                                                                         initial,
                                                                         F_target,

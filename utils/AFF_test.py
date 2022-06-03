@@ -1488,6 +1488,7 @@ class AFFTrain(object):
                 
                       #a=(np.concatenate(F_star_L)<=np.concatenate(F_val_atom) and np.concatenate(F_star_H)>=np.concatenate(F_val_atom))
             cost_SAE=np.sum(np.abs(np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target))) + loss_variance
+            cost_force=np.sum(np.abs(np.concatenate(F_hat_val_F)-np.concatenate(F_hat_val_target))) 
             
             
             # L-2 LOSS
@@ -1504,6 +1505,7 @@ class AFFTrain(object):
             if cost_SAE>cost_previous or loss_variance>20:
                 print("return the current best L-2 LOSS",cost_previous)
                 print("the sum of the predictive variance",loss_variance)
+                print('cost_force',cost_force)
                 break
                 
             
@@ -1512,6 +1514,8 @@ class AFFTrain(object):
             #RMSE_F=np.sqrt(np.mean((np.concatenate(F_hat_val_F)-np.concatenate(F_val_atom))**2))/np.std(np.concatenate(F_val_atom))
             print(' the cost is '+repr(cost_SAE)) 
             print(" the sum of the predictive variance"+repr(loss_variance)+'\n')
+            print(" the cost_force"+repr(cost_force)+'\n')
+            
             record.append(cost_SAE)
             #print(drl)
             #print(' the mean of drl is '+repr(np.max(np.abs(drl))))
