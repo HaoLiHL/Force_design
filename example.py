@@ -59,7 +59,7 @@ F_target=np.zeros((task['R_train'].shape[1],3)).reshape(-1)
 
 #F_target[0]=0
 
-initial=0
+initial=1
 #n_sam=11
 #R_target1=np.empty((n_sam,12,3))
 #F_predict=np.empty((n_sam,12,3))
