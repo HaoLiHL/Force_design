@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Feb 23 14:57:57 2021
-
 @author: lihao
 """
 import numpy as np
@@ -173,8 +172,7 @@ def _r_to_d_desc(r, pdist, lat_and_inv=None, coff=None):  # TODO: fix documentat
 
 def _r_to_d2_desc(r, k,pdist, lat_and_inv=None, coff=None):  # TODO: fix documentation!
     """
-    already checked!
-    Generate descriptor Hessian for a set of atom positions in
+    Generate descriptor Jacobian for a set of atom positions in
     Cartesian coordinates.
     This method can apply the minimum-image convention as periodic
     boundary condition for distances between atoms, given the edge
@@ -188,7 +186,7 @@ def _r_to_d2_desc(r, k,pdist, lat_and_inv=None, coff=None):  # TODO: fix documen
             Array of size N x N containing the Euclidean distance
             (2-norm) for each pair of atoms.
         d_index: 1:3N represent the d^2/d_ d_index (d_index=1:3N)
-        k =d_index % 3  k=0,1,2, means x,y,z
+        k =d_index % 3  k=0,1,2
         lat_and_inv : tuple of :obj:`numpy.ndarray`, optional
             Tuple of 3x3 matrix containing lattice vectors as columns and its inverse.
     Returns
@@ -213,14 +211,9 @@ def _r_to_d2_desc(r, k,pdist, lat_and_inv=None, coff=None):  # TODO: fix documen
         #d_desc_elem = -pdiff / (pdist ** 3)[:, None]
         # pdist (66,)
         #d_desc_elem = pdiff / (pdist ** 3)[:, None] #original
-    
-    # if d_i ==d_i_index,  \partial^2 D_ij /\partial r_{ik} \partial r_{jk}
-    #checked: d_desc_elem_1
-    d_desc_elem_1 = ((pdist ** 2)[:,None] - 3* pdiff ** 2)/(pdist ** 5)[:, None]   # if d_i ==d_i_index
+    d_desc_elem_1 = ((pdist ** 2)[:,None]+3* pdiff ** 2)/(pdist ** 5)[:, None]   # if d_i ==d_i_index
     #k = d_index % 3
-    # if d_i !=d_i_index,  \partial^2 D_ij /\partial r_{ik} \partial r_{jl}
-    d_desc_elem_k = -(3* pdiff * pdiff[:,k][:,None])/(pdist ** 5)[:, None]
-    # d_desc_elem_k: \partial^2 D_ij /\partial r_{ik} \partial r_{jk}
+    d_desc_elem_k = (3* pdiff * pdiff[:,k][:,None])/(pdist ** 5)[:, None]
     
     return d_desc_elem_1,d_desc_elem_k
 
@@ -542,7 +535,6 @@ class Desc_inv(object):
     def d2_desc_from_comp(self, R_d2_desc_1, R_d2_desc_k, index_d, out=None):
         # R_d_desc 66*3
         # NOTE: out must be filled with zeros!
-        # R_d2_desc_1 : 
 
         if R_d2_desc_1.ndim == 2:
             R_d2_desc_1 = R_d2_desc_1[None, ...]
@@ -552,114 +544,25 @@ class Desc_inv(object):
         i, j = self.tril_indices
 
         if out is None:
-            # out : 1* 66* 12 * 3
-            # out: 1* N(N-1)/2 * N * 3
             out = np.zeros((n, self.dim, self.n_atoms, 3))
         else:
             out = out.reshape(n, self.dim, self.n_atoms, 3)
         
-        r_n=index_d // 3  # the index of atom
-        r_i=index_d % 3   # the index of x,y,z (0,1,2)
+        r_n=index_d // 3
+        r_i=index_d % 3
         
-        # old 2022/06/09
-        # out[:, self.dim_range[j==r_n], j[j==r_n], r_i] = R_d2_desc_1[:,self.dim_range[j==r_n],r_i]
-        # #out[:, self.dim_range[j==r_n], j[j==r_n], np.arange(3)[np.arange(3)!=r_i]] = R_d2_desc_k[np.ix_(self.dim_range[j==r_n],np.arange(3)[np.arange(3)!=0])]
-        # out[:, self.dim_range[j==r_n], j[j==r_n], :][:,:,np.arange(3)[np.arange(3)!=r_i]]= R_d2_desc_k[0,:,:][np.ix_(self.dim_range[j==r_n],np.arange(3)[np.arange(3)!=r_i])]
-        
-        
-        # out[:, self.dim_range[i==r_n], i[i==r_n], r_i] = -R_d2_desc_1[:,self.dim_range[i==r_n],r_i][None]
-        # #out[:, self.dim_range[j==r_n], i[i==r_n], np.arange(3)!=r_i] = -R_d2_desc_k[self.dim_range[j==r_n],np.arange(3)[np.arange(3)!=0]]
-        # out[:, self.dim_range[i==r_n], i[i==r_n], :][:,:,np.arange(3)[np.arange(3)!=r_i]] = -R_d2_desc_k[0,:,:][np.ix_(self.dim_range[i==r_n],np.arange(3)[np.arange(3)!=r_i])]
-        
-        # #out[:, self.dim_range, i, :] = -R_d_desc
-        
-        
-        #out[:, self.dim_range[j==r_n], j[j==r_n], np.arange(3)[np.arange(3)!=r_i]] = R_d2_desc_k[np.ix_(self.dim_range[j==r_n],np.arange(3)[np.arange(3)!=0])]
-        out[:, self.dim_range[j==r_n], j[j==r_n], :]= R_d2_desc_k[0,:,:][np.ix_(self.dim_range[j==r_n],np.arange(3))]
         out[:, self.dim_range[j==r_n], j[j==r_n], r_i] = R_d2_desc_1[:,self.dim_range[j==r_n],r_i]
-        
-        # 
-        for val in self.dim_range[j==r_n]:
-            
-            val_atom = i[val]
-            
-            out[:, val, val_atom, :] = R_d2_desc_k[0,:,:][val,np.arange(3)][None]
-            out[:, val, val_atom, r_i] = R_d2_desc_1[0,:,:][val,r_i]
-            
-            
-        #out[:, self.dim_range[j==r_n], j[j==r_n], :]= R_d2_desc_k[0,:,:][np.ix_(self.dim_range[j==r_n],np.arange(3))]
-        #out[:, self.dim_range[j==r_n], j[j==r_n], r_i] = R_d2_desc_1[:,self.dim_range[j==r_n],r_i]
+        #out[:, self.dim_range[j==r_n], j[j==r_n], np.arange(3)[np.arange(3)!=r_i]] = R_d2_desc_k[np.ix_(self.dim_range[j==r_n],np.arange(3)[np.arange(3)!=0])]
+        out[:, self.dim_range[j==r_n], j[j==r_n], :][:,:,np.arange(3)[np.arange(3)!=r_i]] = R_d2_desc_k[0,:,:][np.ix_(self.dim_range[j==r_n],np.arange(3)[np.arange(3)!=r_i])]
         
         
-
-    
-        out[:, self.dim_range[i==r_n], i[i==r_n], :] = -R_d2_desc_k[0,:,:][np.ix_(self.dim_range[i==r_n],np.arange(3))]
         out[:, self.dim_range[i==r_n], i[i==r_n], r_i] = -R_d2_desc_1[:,self.dim_range[i==r_n],r_i][None]
+        #out[:, self.dim_range[j==r_n], i[i==r_n], np.arange(3)!=r_i] = -R_d2_desc_k[self.dim_range[j==r_n],np.arange(3)[np.arange(3)!=0]]
+        out[:, self.dim_range[i==r_n], i[i==r_n], :][:,:,np.arange(3)[np.arange(3)!=r_i]] = -R_d2_desc_k[0,:,:][np.ix_(self.dim_range[i==r_n],np.arange(3)[np.arange(3)!=r_i])]
         
-        for val in self.dim_range[i==r_n]:
-            val_atom = j[val]
-            out[:, val, val_atom, :] = -R_d2_desc_k[0,:,:][val,np.arange(3)][None]
-            out[:, val, val_atom, r_i] = -R_d2_desc_1[0,:,:][val,r_i]
-        
-        print('done')
-        return out.reshape(-1, self.dim, self.dim_i)  # 66 * 36
+        #out[:, self.dim_range, i, :] = -R_d_desc
 
-    def d2_desc_from_comp_1017(self, R_val, index_d, out=None):
-        # R_d_desc 66*3
-        # NOTE: out must be filled with zeros!
-        # R_d2_desc_1 : 
-    
-        R = R_val.reshape(-1,3)
-        n = 1
-        
-    
-        # if out is None:
-        #     # out : 1* 66* 12 * 3
-        #     # out: 1* N(N-1)/2 * N * 3
-        #     out = np.zeros((n, self.dim, self.n_atoms, 3))
-        # else:
-        #     out = out.reshape(n, self.dim, self.n_atoms, 3)
-        out = np.zeros((self.n_atoms,self.n_atoms,self.n_atoms*3))
-        out_index = index_d
-        out_index_atom = out_index//3
-        out_index_xyz = out_index%3 
-        for l in range(self.n_atoms*3):
-            index_atom = l // 3
-            index_xyz = l % 3
-            
-            for i in range(1,self.n_atoms):
-                for j in range(i):
-                    d = np.sqrt(np.sum((R[i,:]-R[j,:])**2))
-                    if (index_atom == i and out_index_atom==i):
-                        if index_xyz==out_index_xyz:
-                            out[i,j,l] = - (d**2 - 3*(R[i,index_xyz]-R[j,out_index_xyz] ))/(d**5)
-                        else:
-                            out[i,j,l] = (3*(R[i,index_xyz]-R[j,index_xyz])*(R[i,out_index_xyz]-R[j,out_index_xyz]))/(d**5)
-                    elif (index_atom == i and out_index_atom==j):
-                        if index_xyz==out_index_xyz:
-                            out[i,j,l] = (d**2 - 3*(R[i,index_xyz]-R[j,out_index_xyz] ))/(d**5)
-                        else:
-                            out[i,j,l] = (-3*(R[i,index_xyz]-R[j,index_xyz])*(R[i,out_index_xyz]-R[j,out_index_xyz]))/(d**5)
-                    
-                    if (index_atom == j and out_index_atom==j):
-                        if index_xyz==out_index_xyz:
-                            out[i,j,l] = - (d**2 - 3*(R[i,index_xyz]-R[j,out_index_xyz] ))/(d**5)
-                        else:
-                            out[i,j,l] = (3*(R[i,index_xyz]-R[j,index_xyz])*(R[i,out_index_xyz]-R[j,out_index_xyz]))/(d**5)
-                    elif (index_atom == j and out_index_atom==i):
-                        if index_xyz==out_index_xyz:
-                            out[i,j,l] = (d**2 - 3*(R[i,index_xyz]-R[j,out_index_xyz] ))/(d**5)
-                        else:
-                            out[i,j,l] = (-3*(R[i,index_xyz]-R[j,index_xyz])*(R[i,out_index_xyz]-R[j,out_index_xyz]))/(d**5)
-                            
-        i, j = self.tril_indices
-        res = out[i,j,:].reshape(1,-1, self.n_atoms*3)
-        return res
-
-        
-        
-        
-          # 66 * 36
+        return out.reshape(-1, self.dim, self.dim_i)
 
     # deflate desc
     def d_desc_to_comp(self, R_d_desc):
@@ -681,9 +584,3 @@ class Desc_inv(object):
         ret = ret[:, i, j, :]
 
         return ret
-
-#task_tem=np.load('task_file.npy',allow_pickle='TRUE').item()
-#desc = Desc(                12,
-#                interact_cut_off=task_tem['interact_cut_off'],
-#                max_processes=None,
-#            )
