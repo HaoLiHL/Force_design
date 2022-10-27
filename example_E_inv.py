@@ -117,7 +117,7 @@ while n_loop<20:
     Real_E_record.append(new_E[0]*23.06)
     
     if new_E[0]*23.06 == 0:
-        print(simulation fail, stop!)
+        print("simulation fail, stop!")
         break
 
     print("current real energy is ",new_E[0]*23.06)
