@@ -51,13 +51,13 @@ R_target = Record['R_last']
 E_var_rec =Record['E_var_rec']
 E_predict_rec =Record['E_predict_rec']
 
-AFF_train.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
+AFF_E_inv.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
 # 
 # atomic number shall be defined in the beginning of the program once as well
 atomic_number = dataset['z']
 
 computational_method = ['PBE', 'PBE', '6-31G']
-new_E, new_F = AFF_train.run_physics_baed_calculation(R_target[None], atomic_number, computational_method)
+new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target[None], atomic_number, computational_method)
 
 #print(np.array(new_F).shape)
 #print(new_E.shape)
@@ -104,13 +104,13 @@ while n_loop<20:
         print('Warning! Cannot further reduce the Loss')
         break
     
-    AFF_train.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
+    AFF_E_inv.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
     # 
     # atomic number shall be defined in the beginning of the program once as well
     atomic_number = dataset['z']
    
     computational_method = ['PBE', 'PBE', '6-31G']
-    new_E, new_F = AFF_train.run_physics_baed_calculation(R_target[None], atomic_number, computational_method)
+    new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target[None], atomic_number, computational_method)
     #cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
     cost = np.sum(np.abs(np.concatenate(new_E)))
     
