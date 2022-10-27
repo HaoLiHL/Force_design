@@ -27,7 +27,7 @@ dataset=np.load('uracil_dft_mu.npz')
 #dataset=np.load('H2CO_mu.npz')
 AFF_train=AFF_test.AFFTrain()
 
-c
+n_train=100
 
 #create the task file contains the training, validation and testing dataset 
 # task=AFF_train.create_task(train_dataset=dataset, 
