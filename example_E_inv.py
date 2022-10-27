@@ -63,12 +63,12 @@ new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target[None], atomic_num
 #print(new_E.shape)
 #cost = np.sum(np.abs(np.concatenate(new_E)))
 
-print("current real energy is ",new_E)
+print("current real energy is ",new_E[0]*23.06)
 print('new_E,new_F ',new_F)
 
 n_loop = 0
 
-Real_E_record = [task["E_train"][initial],new_E]
+Real_E_record = [task["E_train"][initial][0],new_E[0]*23.06]
 
 while n_loop<20:
     
@@ -80,7 +80,7 @@ while n_loop<20:
     
     task['F_train'] = np.append(task['F_train'],new_F).reshape(n_train+1,12,-1)
     
-    task['E_train'] = np.append(task['E_train'],new_E).reshape(-1,1)
+    task['E_train'] = np.append(task['E_train'],np.array(new_E[0]*23.06)).reshape(-1,1)
     
     #AFF_train=AFF.AFFTrain()
     candid_range = np.exp(np.arange(-5,4,1))
@@ -114,9 +114,9 @@ while n_loop<20:
     #cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
     #cost = np.abs(E_target-new_E)
     
-    Real_E_record.append(new_E)
+    Real_E_record.append(new_E[0]*23.06)
 
-    print("current real energy is ",new_E)
+    print("current real energy is ",new_E[0]*23.06)
     print('new_E,new_F ',new_F)
 
     #print('new_E,new_F ',new_F)
