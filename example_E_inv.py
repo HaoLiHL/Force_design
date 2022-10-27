@@ -122,7 +122,7 @@ while n_loop<20:
     #print('new_E,new_F ',new_F)
     
 print('-------finished-------- \n')
-print('REAL E Record': Real_E_record) 
+print('REAL E Record', Real_E_record) 
 np.save('Real_E_record.npy', Real_E_record) 
     # Record1=gdml_train.inverseE( task1,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-7,c=1e7)
     

@@ -1885,185 +1885,185 @@ class AFFTrain(object):
     
         return np.frombuffer(K).reshape(glob['K_shape'])
     
-
-def compile_scirpts_for_physics_based_calculation_IO(R_design):
-
-
-    [num_molecules, num_atoms,*_] = R_design.shape
-
-    energy_converter_script = './scripts/script_E.c'
-    energy_converter_script_path = './scripts/script_E'
-    force_converter_script = './scripts/script_F.c'
-    cp_force_converter_script = './scripts/cp_script_F.c'
-    force_converter_script_path = './scripts/script_F'
-
-    command_compile_E_convertor = ["gcc", energy_converter_script, "-o", energy_converter_script_path]
-    compile_E = subprocess.Popen(' '.join(command_compile_E_convertor), shell=True)
-    compile_E.wait()
-
-
-    command_cp_F_convertor = ["cp", force_converter_script, cp_force_converter_script]
-    cp_F_convertor = subprocess.Popen(' '.join(command_cp_F_convertor), shell=True)
-    cp_F_convertor.wait()
-    replace_content = ["\"s/NUMATOM/", str(num_atoms), "/g\""]
-    command_replace_num_atom_F_convertor = ["sed", "-i", ''.join(replace_content), cp_force_converter_script]
-    replace_F = subprocess.Popen(' '.join(command_replace_num_atom_F_convertor), shell=True)
-    replace_F.wait()
-    command_compile_F_convertor = ["gcc", cp_force_converter_script, "-o", force_converter_script_path, "-lm"]
-    compile_F = subprocess.Popen(' '.join(command_compile_F_convertor), shell=True)
-    compile_F.wait()
-
-
-
-
-
-
-
-# function for external physics-based calculation
-def run_physics_baed_calculation(R_design, atomic_number, computational_method):
-
-    # attention!!!
-    # maybe we can change this into parameter for users to change
-    # default location to read element table
-    with open('./scripts/element_table', 'rb') as fp:
-        element_table = pickle.load(fp)
-
-    # no need to load R_design.npy as file any more because it is one of the inputs
-    # # this command can be removed once merge into the main program
-    # R_design = np.load('R_design.npy')
-
-    # atomic number of each atom in the molecule also needs to specify
-    # for example C O H H would be array([6, 8, 1, 1], dtype=uint8)
-    # atomic_number = np.load('atomic_number.npy')
-
-
-
-    # it seems the number of predicted molecules is not directly readable in the update.py
-    # it seems there is no variables to record how many atoms in one molecules
-    # therefore read these info from the shape of R_design
-    [num_molecules, num_atoms,*_] = R_design.shape
-
-    simulator_input_filename = "simulator_input.dat"
-    simulator_output_filename = "simulator_output.dat"
-    # attention!!!
-    # this could be changed into a variable so that the number of cores used to run physics-based
-    # calculation can be customizedß
-    num_parallel_core = 32
-
-    simulation_failed_string = 'SCF failed to converge'
-    temp_energy_filename = "temp_energy.dat"
-    energy_filename = "energy.dat"
-    temp_force_filename = "temp_force.dat"
-    force_filename = "force.dat"
-
-
-    energy_converter_script_path = './scripts/script_E'
-    force_converter_script_path = './scripts/script_F'
-
-
-    E_new_simulation = np.zeros((num_molecules,))
-    F_new_simulation = np.zeros((num_molecules,num_atoms,3))
-
-
-    for index_run in range(num_molecules):
-    # for index_run in range(2):
-
-        with open(simulator_input_filename, 'wt') as input_write:
-            input_write.write("$molecule\n")
-            input_write.write("0 1\n")
-
-            for index_atom in range(len(atomic_number)):
-                input_write.write("%s\t" % element_table[atomic_number[index_atom]-1])
-
-                for i_dimension in range(3):
-                    # print(R_design[index_run, 0, i_dimension])
-                    input_write.write("%.9lf\t" % R_design[index_run, index_atom, i_dimension])
+    
+    def compile_scirpts_for_physics_based_calculation_IO(R_design):
+    
+    
+        [num_molecules, num_atoms,*_] = R_design.shape
+    
+        energy_converter_script = './scripts/script_E.c'
+        energy_converter_script_path = './scripts/script_E'
+        force_converter_script = './scripts/script_F.c'
+        cp_force_converter_script = './scripts/cp_script_F.c'
+        force_converter_script_path = './scripts/script_F'
+    
+        command_compile_E_convertor = ["gcc", energy_converter_script, "-o", energy_converter_script_path]
+        compile_E = subprocess.Popen(' '.join(command_compile_E_convertor), shell=True)
+        compile_E.wait()
+    
+    
+        command_cp_F_convertor = ["cp", force_converter_script, cp_force_converter_script]
+        cp_F_convertor = subprocess.Popen(' '.join(command_cp_F_convertor), shell=True)
+        cp_F_convertor.wait()
+        replace_content = ["\"s/NUMATOM/", str(num_atoms), "/g\""]
+        command_replace_num_atom_F_convertor = ["sed", "-i", ''.join(replace_content), cp_force_converter_script]
+        replace_F = subprocess.Popen(' '.join(command_replace_num_atom_F_convertor), shell=True)
+        replace_F.wait()
+        command_compile_F_convertor = ["gcc", cp_force_converter_script, "-o", force_converter_script_path, "-lm"]
+        compile_F = subprocess.Popen(' '.join(command_compile_F_convertor), shell=True)
+        compile_F.wait()
+    
+    
+    
+    
+    
+    
+    
+    # function for external physics-based calculation
+    def run_physics_baed_calculation(R_design, atomic_number, computational_method):
+    
+        # attention!!!
+        # maybe we can change this into parameter for users to change
+        # default location to read element table
+        with open('./scripts/element_table', 'rb') as fp:
+            element_table = pickle.load(fp)
+    
+        # no need to load R_design.npy as file any more because it is one of the inputs
+        # # this command can be removed once merge into the main program
+        # R_design = np.load('R_design.npy')
+    
+        # atomic number of each atom in the molecule also needs to specify
+        # for example C O H H would be array([6, 8, 1, 1], dtype=uint8)
+        # atomic_number = np.load('atomic_number.npy')
+    
+    
+    
+        # it seems the number of predicted molecules is not directly readable in the update.py
+        # it seems there is no variables to record how many atoms in one molecules
+        # therefore read these info from the shape of R_design
+        [num_molecules, num_atoms,*_] = R_design.shape
+    
+        simulator_input_filename = "simulator_input.dat"
+        simulator_output_filename = "simulator_output.dat"
+        # attention!!!
+        # this could be changed into a variable so that the number of cores used to run physics-based
+        # calculation can be customizedß
+        num_parallel_core = 32
+    
+        simulation_failed_string = 'SCF failed to converge'
+        temp_energy_filename = "temp_energy.dat"
+        energy_filename = "energy.dat"
+        temp_force_filename = "temp_force.dat"
+        force_filename = "force.dat"
+    
+    
+        energy_converter_script_path = './scripts/script_E'
+        force_converter_script_path = './scripts/script_F'
+    
+    
+        E_new_simulation = np.zeros((num_molecules,))
+        F_new_simulation = np.zeros((num_molecules,num_atoms,3))
+    
+    
+        for index_run in range(num_molecules):
+        # for index_run in range(2):
+    
+            with open(simulator_input_filename, 'wt') as input_write:
+                input_write.write("$molecule\n")
+                input_write.write("0 1\n")
+    
+                for index_atom in range(len(atomic_number)):
+                    input_write.write("%s\t" % element_table[atomic_number[index_atom]-1])
+    
+                    for i_dimension in range(3):
+                        # print(R_design[index_run, 0, i_dimension])
+                        input_write.write("%.9lf\t" % R_design[index_run, index_atom, i_dimension])
+                    input_write.write("\n")
+                
+                # attention!!!
+                # future features
+                # some of the following calculation settings can be cahnged into variables
+                # that allow users to make changes according to their needs
+                input_write.write("$end\n")
                 input_write.write("\n")
-            
-            # attention!!!
-            # future features
-            # some of the following calculation settings can be cahnged into variables
-            # that allow users to make changes according to their needs
-            input_write.write("$end\n")
-            input_write.write("\n")
-            input_write.write("$rem\n")
-            input_write.write("jobtype                force\n")
-            input_write.write("exchange               ")
-            input_write.write(str(computational_method[0]))
-            input_write.write("\n")
-            input_write.write("correlation            ")
-            input_write.write(str(computational_method[1]))
-            input_write.write("\n")
-            input_write.write("basis                  ")
-            input_write.write(str(computational_method[2]))
-            input_write.write("\n")
-            input_write.write("SCF_CONVERGENCE 11\n")
-            input_write.write("symmetry false\n")
-            input_write.write("sym_ignore true\n")
-            input_write.write("$end\n")
-
-
-
-
-        # submit jobs to calculation
-        command_run_simulation = ["qchem", "-slurm", "-nt", str(num_parallel_core), simulator_input_filename, ">", simulator_output_filename]
-        run_simulator = subprocess.Popen(' '.join(command_run_simulation), shell=True)
-        run_simulator.wait()
-
-        signal_simulation_success = 1
-        with open(simulator_output_filename, "rt") as read_ouput:
-        # with open('failed.out', 'rt') as read_ouput:
-            for line in read_ouput:
-                # print(line)
-                if simulation_failed_string in line:
-                    signal_simulation_success = 0
-                    print('simulation failed')
-                    break
-
-        if signal_simulation_success == 1:
-            print('simulation succeed')
-
-            # read energy into the matrix
-            command_grep_energy = ["grep", "\"Convergence criterion met\"", simulator_output_filename, ">", temp_energy_filename]
-            grep_energy = subprocess.Popen(' '.join(command_grep_energy), shell=True)
-            grep_energy.wait()
-            command_conv_energy = [energy_converter_script_path, temp_energy_filename, energy_filename]
-            conv_energy = subprocess.Popen(' '.join(command_conv_energy), shell=True)
-            conv_energy.wait()
-            single_energy = np.loadtxt(energy_filename)
-            os.remove(temp_energy_filename)
-            os.remove(energy_filename)
-            if np.any(single_energy) is False:
-                print('!!!!!!!! no energy read')
-            else:
-                E_new_simulation[index_run] = single_energy
-
-            if computational_method[0] == 'mp2':
-                command_grep_force = ["grep", "-A",  str(math.ceil(num_atoms/6)*4), "\"Full Analytical Gradient of MP2 Energy\"", simulator_output_filename, ">", temp_force_filename]
-            elif computational_method[0] == 'PBE':
-                command_grep_force = ["grep", "-A",  str(math.ceil(num_atoms/6)*4), "\"Gradient of SCF Energy\"", simulator_output_filename, ">", temp_force_filename]
-            grep_force = subprocess.Popen(' '.join(command_grep_force), shell=True)
-            grep_force.wait()
-            command_force_energy = [force_converter_script_path, temp_force_filename, force_filename]
-            conv_force = subprocess.Popen(' '.join(command_force_energy), shell=True)
-            conv_force.wait()
-            single_force = np.loadtxt(force_filename)
-            os.remove(temp_force_filename)
-            os.remove(force_filename)
-            if np.any(single_force) is False:
-                print('!!!!!!!! no force read')
-            else:
-                if single_force.shape is not F_new_simulation[0,:,:]:
-                    F_new_simulation[index_run,:,:] = single_force
+                input_write.write("$rem\n")
+                input_write.write("jobtype                force\n")
+                input_write.write("exchange               ")
+                input_write.write(str(computational_method[0]))
+                input_write.write("\n")
+                input_write.write("correlation            ")
+                input_write.write(str(computational_method[1]))
+                input_write.write("\n")
+                input_write.write("basis                  ")
+                input_write.write(str(computational_method[2]))
+                input_write.write("\n")
+                input_write.write("SCF_CONVERGENCE 11\n")
+                input_write.write("symmetry false\n")
+                input_write.write("sym_ignore true\n")
+                input_write.write("$end\n")
+    
+    
+    
+    
+            # submit jobs to calculation
+            command_run_simulation = ["qchem", "-slurm", "-nt", str(num_parallel_core), simulator_input_filename, ">", simulator_output_filename]
+            run_simulator = subprocess.Popen(' '.join(command_run_simulation), shell=True)
+            run_simulator.wait()
+    
+            signal_simulation_success = 1
+            with open(simulator_output_filename, "rt") as read_ouput:
+            # with open('failed.out', 'rt') as read_ouput:
+                for line in read_ouput:
+                    # print(line)
+                    if simulation_failed_string in line:
+                        signal_simulation_success = 0
+                        print('simulation failed')
+                        break
+    
+            if signal_simulation_success == 1:
+                print('simulation succeed')
+    
+                # read energy into the matrix
+                command_grep_energy = ["grep", "\"Convergence criterion met\"", simulator_output_filename, ">", temp_energy_filename]
+                grep_energy = subprocess.Popen(' '.join(command_grep_energy), shell=True)
+                grep_energy.wait()
+                command_conv_energy = [energy_converter_script_path, temp_energy_filename, energy_filename]
+                conv_energy = subprocess.Popen(' '.join(command_conv_energy), shell=True)
+                conv_energy.wait()
+                single_energy = np.loadtxt(energy_filename)
+                os.remove(temp_energy_filename)
+                os.remove(energy_filename)
+                if np.any(single_energy) is False:
+                    print('!!!!!!!! no energy read')
                 else:
-                    print("!!!!!!! wrong dimension in force extraction")
-                    print("!!!!!!! please check")
-
-
-
-    print(E_new_simulation)
-    print(F_new_simulation)
-
-    return E_new_simulation, F_new_simulation
+                    E_new_simulation[index_run] = single_energy
+    
+                if computational_method[0] == 'mp2':
+                    command_grep_force = ["grep", "-A",  str(math.ceil(num_atoms/6)*4), "\"Full Analytical Gradient of MP2 Energy\"", simulator_output_filename, ">", temp_force_filename]
+                elif computational_method[0] == 'PBE':
+                    command_grep_force = ["grep", "-A",  str(math.ceil(num_atoms/6)*4), "\"Gradient of SCF Energy\"", simulator_output_filename, ">", temp_force_filename]
+                grep_force = subprocess.Popen(' '.join(command_grep_force), shell=True)
+                grep_force.wait()
+                command_force_energy = [force_converter_script_path, temp_force_filename, force_filename]
+                conv_force = subprocess.Popen(' '.join(command_force_energy), shell=True)
+                conv_force.wait()
+                single_force = np.loadtxt(force_filename)
+                os.remove(temp_force_filename)
+                os.remove(force_filename)
+                if np.any(single_force) is False:
+                    print('!!!!!!!! no force read')
+                else:
+                    if single_force.shape is not F_new_simulation[0,:,:]:
+                        F_new_simulation[index_run,:,:] = single_force
+                    else:
+                        print("!!!!!!! wrong dimension in force extraction")
+                        print("!!!!!!! please check")
+    
+    
+    
+        print(E_new_simulation)
+        print(F_new_simulation)
+    
+        return E_new_simulation, F_new_simulation
   
 
