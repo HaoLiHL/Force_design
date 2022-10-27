@@ -1503,7 +1503,7 @@ class AFFTrain(object):
             #R_val_atom[0,:,:]= R_val_atom[0,:,:]- 2*(E_pred-E_target)*(delta@alphas_opt).reshape(n_atoms,3)*lr  
             
             R_design.append(R_last)
-        return {'R_last':R_last,'E_var_rec':E_var_rec,'E_predict_rec':E_predict_rec,'R_design':R_design}
+        return {'R_last':R_last,'E_var_rec':E_var_rec,'E_predict_rec':E_predict_rec,'R_design':np.array(R_design)}
         #return R_last #print(' The delta : '+repr(delta))
             
         #F_hat_val = F_hat_val1*y_std

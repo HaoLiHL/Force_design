@@ -61,7 +61,7 @@ new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target[None], atomic_num
 
 #print(np.array(new_F).shape)
 #print(new_E.shape)
-cost = np.sum(np.abs(np.concatenate(new_E)))
+#cost = np.sum(np.abs(np.concatenate(new_E)))
 
 print("current real energy is ",new_E)
 print('new_E,new_F ',new_F)
@@ -112,7 +112,7 @@ while n_loop<20:
     computational_method = ['PBE', 'PBE', '6-31G']
     new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target[None], atomic_number, computational_method)
     #cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
-    cost = np.sum(np.abs(np.concatenate(new_E)))
+    #cost = np.abs(E_target-new_E)
     
     Real_E_record.append(new_E)
 
