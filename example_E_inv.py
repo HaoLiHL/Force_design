@@ -45,7 +45,7 @@ initial = 1
 print('start from',task["E_train"][initial])
 
     
-Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-6,c=0)
+Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-4,c=0)
     
 R_target = Record['R_last']
 E_var_rec =Record['E_var_rec']
@@ -89,7 +89,7 @@ while n_loop<20:
     
     initial=n_train
     
-    Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-6,c=0)
+    Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-4,c=0)
         
     R_target = Record['R_last']
     E_var_rec =Record['E_var_rec']

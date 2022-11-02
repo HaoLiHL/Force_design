@@ -1352,7 +1352,7 @@ class AFFTrain(object):
         R_last = None
         import math
         E_pred = math.inf
-        n_step = 20
+        n_step = 10
         
         E_predict_rec = []
         E_var_rec = []
