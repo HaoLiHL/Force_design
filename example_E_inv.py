@@ -37,15 +37,15 @@ task=np.load('saved_model/task11.npy',allow_pickle=True).item()
 trained_model = np.load('saved_model/trained_model1.npy',allow_pickle=True).item()
 
 #E_target=max(task1['E_train'])[0]+100
-E_target = -259000
+E_target = -259999
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
-initial = 1
+initial = 0
 print('start from',task["E_train"][initial])
 
     
-Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-4,c=0)
+Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=0)
     
 R_target = Record['R_last']
 E_var_rec =Record['E_var_rec']
@@ -89,7 +89,7 @@ while n_loop<20:
     
     initial=n_train
     
-    Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-4,c=0)
+    Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=0)
         
     R_target = Record['R_last']
     E_var_rec =Record['E_var_rec']

@@ -1398,7 +1398,7 @@ class AFFTrain(object):
            
                 #alphas=R_inv_Y-R_inv_H *theta_hat
             #E_pred= np.repeat([1],n_val)*theta_hat + r_T @ alphas_opt
-           
+            
             tem =( theta_hat + r_T @ alphas_opt)*trained_model['E_train_std'] + trained_model['E_train_mean']
             
             if np.abs(E_pred)<np.abs(tem):
