@@ -1401,8 +1401,8 @@ class AFFTrain(object):
             
             tem =( theta_hat + r_T @ alphas_opt)*trained_model['E_train_std'] + trained_model['E_train_mean']
             
-            if np.abs(E_pred)<np.abs(tem):
-                break
+            # if np.abs(E_pred)<np.abs(tem):
+            #     break
             
             E_pred= tem
             
