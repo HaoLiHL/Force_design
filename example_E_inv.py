@@ -59,16 +59,18 @@ atomic_number = dataset['z']
 computational_method = ['PBE', 'PBE', '6-31G']
 new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target[None], atomic_number, computational_method)
 
+
+ev_to_kcal = 23.060541945329334
 #print(np.array(new_F).shape)
 #print(new_E.shape)
 #cost = np.sum(np.abs(np.concatenate(new_E)))
 
-print("current real energy is ",new_E[0]*23.06)
+print("current real energy is ",new_E[0]*ev_to_kcal)
 print('new_E,new_F ',new_F)
 
 n_loop = 0
 
-Real_E_record = [task["E_train"][initial][0],new_E[0]*23.06]
+Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 
 while n_loop<20:
     
@@ -80,16 +82,16 @@ while n_loop<20:
     
     task['F_train'] = np.append(task['F_train'],new_F).reshape(n_train+1,12,-1)
     
-    task['E_train'] = np.append(task['E_train'],np.array(new_E[0]*23.06)).reshape(-1,1)
+    task['E_train'] = np.append(task['E_train'],np.array(new_E[0]*ev_to_kcal)).reshape(-1,1)
     
     #AFF_train=AFF.AFFTrain()
-    candid_range = np.exp(np.arange(-5,4,1))
+    candid_range = np.exp(np.arange(-5,5,1))
     trained_model = AFF_train.train(task,sig_candid_F = candid_range)
     
     
     initial=n_train
     
-    Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-6,c=0,num_step=5)
+    Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-7,c=0,num_step=5)
         
     R_target = Record['R_last']
     E_var_rec =Record['E_var_rec']
@@ -114,13 +116,13 @@ while n_loop<20:
     #cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
     #cost = np.abs(E_target-new_E)
     
-    Real_E_record.append(new_E[0]*23.06)
+    Real_E_record.append(new_E[0]*ev_to_kcal)
     
-    if new_E[0]*23.06 == 0:
+    if new_E[0]*ev_to_kcal == 0:
         print("simulation fail, stop!")
         break
 
-    print("current real energy is ",new_E[0]*23.06)
+    print("current real energy is ",new_E[0]*ev_to_kcal)
     print('new_E,new_F ',new_F)
 
     #print('new_E,new_F ',new_F)
