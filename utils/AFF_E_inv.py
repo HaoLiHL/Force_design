@@ -1292,7 +1292,7 @@ class AFFTrain(object):
         #print(' The RMSE/SD of testing dataset : '+repr(RMSE))
         return E_pred
   
-    def inverseE(self, task,trained_model,E_target, ind_initial,tol_MAE, lr,c,
+    def inverseE(self, task,trained_model,E_target, ind_initial,tol_MAE, lr,c,num_step,
             cprsn_callback=None,
             save_progr_callback=None,  # TODO: document me
             callback=None):
@@ -1352,7 +1352,7 @@ class AFFTrain(object):
         R_last = None
         import math
         E_pred = math.inf
-        n_step = 10
+        n_step = num_step
         
         E_predict_rec = []
         E_var_rec = []
