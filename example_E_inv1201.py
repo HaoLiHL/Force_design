@@ -88,7 +88,7 @@ n_loop = 0
 
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Real_loss_record = []
-while n_loop<30:
+while n_loop<10:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
