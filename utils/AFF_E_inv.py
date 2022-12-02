@@ -1291,6 +1291,232 @@ class AFFTrain(object):
         #print(' The MAE of testing dataset : '+repr(MAE))
         #print(' The RMSE/SD of testing dataset : '+repr(RMSE))
         return E_pred
+    
+    def predict_loss(self,task,trained_model,R_val_atom,c,E_target):
+        task = dict(task)
+        sig_optim = trained_model['sig_optim']
+        theta_hat = trained_model['theta_opt']
+        alphas_opt = trained_model['alphas_opt']
+        var_square_opt = trained_model['var_square_opt']
+        
+        #solver = task['solver_name']
+        n_train, n_atoms = task['R_train'].shape[:2]
+        desc = Desc(
+                n_atoms,
+                interact_cut_off=task['interact_cut_off'],
+                max_processes=None,
+            )
+        n_perms = task['perms'].shape[0]  # 12 on benzene
+        tril_perms = np.array([desc.perm(p) for p in task['perms']])
+
+        #tril_pos=task['perms']
+        
+        # tril_perms stores the 12 permutations on the 66 descriptor
+       #dim_i = 3 * n_atoms #36
+        dim_d = desc.dim  #66 on benzene
+        perm_offsets = np.arange(n_perms)[:, None] * dim_d
+        # perm_offsets a [12,1] matrix stores the [0, 66, 66*2, ..., 12*66]
+        tril_perms_lin = (tril_perms + perm_offsets).flatten('F')
+        tril_perms_lin_mirror = tril_perms_lin
+        
+        # tril_perms_lin stores a vectorized permuations of all 12 permuations' descriptor position
+        n_type=task['n_type']
+        
+        lat_and_inv = None
+        R_atom = task['R_train']  #.reshape(n_train, -1) 
+        
+        #R_val_atom=task['R_train'][ind_initial,None] + (np.random.normal(size = n_atoms*3)*1e-15).reshape(1,-1,3)
+        
+        
+        R_desc_atom, R_d_desc_atom = desc.from_R(R_atom,lat_and_inv=lat_and_inv,
+                callback=None)
+        
+        R_desc_val_atom, R_d_desc_val_atom = desc.from_R(R_val_atom,lat_and_inv=lat_and_inv,
+                callback=None)
+        
+        R_desc_val_atom1=R_desc_val_atom[None]
+        R_d_desc_val_atom1=R_d_desc_val_atom[None]
+
+        #E_val = task['E_test'].ravel().copy()
+
+        
+        r_T=self._assemble_kernel_mat_E_test(
+                    n_type,
+                    R_desc_atom,
+                    R_d_desc_atom,
+                    R_desc_val_atom1,
+                    R_d_desc_val_atom1,
+                    tril_perms_lin,
+                    tril_perms_lin_mirror,
+                    sig_optim,
+                    desc,
+                    use_E_cstr=task['use_E_cstr'],
+                    col_idxs= np.s_[:],
+                    callback=None,
+                )
+       
+           
+        tem =( theta_hat + r_T @ alphas_opt)*trained_model['E_train_std'] + trained_model['E_train_mean']
+
+        E_pred= tem
+
+        delta=self._deltaE(R_desc_atom,
+                           R_d_desc_atom,
+                           R_desc_val_atom1, 
+                           R_d_desc_val_atom1,
+                           tril_perms_lin,
+                           tril_perms_lin_mirror,
+                           sig_optim,
+                           n_type,
+                           )
+        
+        R_cor=self._assemble_kernel_mat_E(
+                n_type,
+                R_desc_atom,
+                R_d_desc_atom,
+                R_desc_atom,
+                R_d_desc_atom,
+                tril_perms_lin,
+                tril_perms_lin_mirror,
+                sig_optim,
+                desc,
+                use_E_cstr=task['use_E_cstr'],
+                col_idxs= np.s_[:],
+                callback=None,
+            )
+        
+       
+        lam = task['lam']
+        #lam = 1e-10
+        R_cor[np.diag_indices_from(R_cor)] += lam 
+        
+        R_cor1 = R_cor.copy()
+        L = sp.linalg.cho_factor(R_cor1, lower = True)
+        
+        R_inv_r = sp.linalg.cho_solve(L,r_T.T)
+        correlation = 1 - r_T @ R_inv_r + lam
+        predicted_var = var_square_opt * correlation
+        gradient_var = -2 * c *  delta @ R_inv_r * var_square_opt
+        loss = np.abs(E_pred-E_target)**2 + c * predicted_var
+        gradient = 2*(E_pred-E_target)*(delta@alphas_opt).reshape(-1,1)  + gradient_var
+        
+        return loss,gradient,E_pred,predicted_var
+    
+    def inverseE_new(self, task,trained_model,E_target, ind_initial,tol_MAE, lr,c,
+            num_step=10,
+            cprsn_callback=None,
+            save_progr_callback=None,  # TODO: document me
+            callback=None):
+        
+        task = dict(task)
+        sig_optim = trained_model['sig_optim']
+        theta_hat = trained_model['theta_opt']
+        alphas_opt = trained_model['alphas_opt']
+        var_square_opt = trained_model['var_square_opt']
+        E_train_mean= trained_model['E_train_mean']
+        
+        #solver = task['solver_name']
+        n_train, n_atoms = task['R_train'].shape[:2]
+        n_val= 1
+        desc = Desc(
+                n_atoms,
+                interact_cut_off=task['interact_cut_off'],
+                max_processes=None,
+            )
+        n_perms = task['perms'].shape[0]  # 12 on benzene
+        tril_perms = np.array([desc.perm(p) for p in task['perms']])
+
+        #tril_pos=task['perms']
+        
+        # tril_perms stores the 12 permutations on the 66 descriptor
+       #dim_i = 3 * n_atoms #36
+        dim_d = desc.dim  #66 on benzene
+        perm_offsets = np.arange(n_perms)[:, None] * dim_d
+        # perm_offsets a [12,1] matrix stores the [0, 66, 66*2, ..., 12*66]
+        tril_perms_lin = (tril_perms + perm_offsets).flatten('F')
+        tril_perms_lin_mirror = tril_perms_lin
+        
+        # tril_perms_lin stores a vectorized permuations of all 12 permuations' descriptor position
+        n_type=task['n_type']
+        
+        lat_and_inv = None
+        R = task['R_train']  #.reshape(n_train, -1) 
+        
+        R_val_atom=task['R_train'][ind_initial,None] + (np.random.normal(size = n_atoms*3)*1e-15).reshape(1,-1,3)
+        
+        R_desc_atom, R_d_desc_atom = desc.from_R(R,lat_and_inv=lat_and_inv,
+                callback=None)
+        
+        
+        # R is a n_train * 36 matrix 
+        E_pred=0
+        tem=0
+        count = 0
+        #for k in range(100):
+        R_last = None
+        import math
+        E_pred = math.inf
+        #n_step = 10
+        
+        E_predict_rec = []
+        E_var_rec = []
+        loss_rec = []
+        
+        #add th ebacktracking line search to find the best step size 
+        t = 0.5
+        beta = 0.1
+        R_initial = task['R_train'][ind_initial,None] #+ (np.random.normal(size = n_atoms*3)*1e-15).reshape(1,-1,3)
+        c_lr = lr
+        prev_loss = math.inf
+        R_design = []
+        while count<num_step and np.abs(E_pred-E_target)>tol_MAE:
+            
+            current_loss, current_grad,temp1,temp2 = self.predict_loss(task, trained_model, R_initial, c, E_target)
+            R_next = R_initial - current_grad.reshape(n_atoms,3) * lr
+            next_loss,next_grad,temp1,temp2 = self.predict_loss(task, trained_model, R_next, c, E_target)
+            #c_lr = lr
+            while next_loss>current_loss + t*c_lr*(current_grad.T@ current_grad):
+                print("the current learing rate is {}".format(c_lr))
+                c_lr = c_lr*beta
+                R_next = R_initial - current_grad.reshape(n_atoms,3) * c_lr
+                next_loss,next_grad,temp1,temp2 = self.predict_loss(task, trained_model, R_next, c, E_target)
+            
+            current_loss, current_grad,cur_pred_mean,cur_pred_var = self.predict_loss(task, trained_model, R_initial, c, E_target)
+            R_next = R_initial - current_grad.reshape(n_atoms,3) * c_lr
+            
+            
+            #tem=tem+1
+            # if tem>10:
+            print('*** current_loss is',current_loss)
+            print('*** predicted_mean is',cur_pred_mean)
+            print('*** predicted_variance is',cur_pred_var[0][0])
+            
+
+            if not loss_rec or current_loss < min(loss_rec):
+                R_best = R_initial.copy()
+                loss_best = current_loss
+                E_best = cur_pred_mean
+            
+            # stop once it converge or not decreasing any more 
+            if current_loss>prev_loss or abs(current_loss-prev_loss)<tol_MAE:
+                print('current loss greater than prev loss, this is the last evaluation !!!')
+                break
+            prev_loss = current_loss
+                
+            E_predict_rec.append(cur_pred_mean)
+            loss_rec.append(current_loss)
+            #gradient_var = -2 * c *  delta @ R_inv_r
+            E_var_rec.append(cur_pred_var[0][0])
+            #print('*** loss is',loss[0][0])
+            #print('analystic gradient',(np.matmul(delta,alphas_opt).reshape(n_atoms,3)))
+            R_initial = R_next
+            
+            R_design.append(R_initial)
+            
+            count +=1 
+        return {'R_best':R_best,'E_var_rec':E_var_rec,'E_best':E_best,'E_predict_rec':E_predict_rec,'loss_rec':loss_rec,'loss_best':loss_best,'R_design':np.array(R_design)}
+      
+    
   
     def inverseE(self, task,trained_model,E_target, ind_initial,tol_MAE, lr,c,num_step,
             cprsn_callback=None,
