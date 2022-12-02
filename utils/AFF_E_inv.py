@@ -1442,7 +1442,7 @@ class AFFTrain(object):
         lat_and_inv = None
         R = task['R_train']  #.reshape(n_train, -1) 
         
-        R_val_atom=task['R_train'][ind_initial,None] + (np.random.normal(size = n_atoms*3)*1e-1).reshape(1,-1,3)
+        R_val_atom=task['R_train'][ind_initial,None] + (np.random.normal(size = n_atoms*3)*1e-2).reshape(1,-1,3)
         
         R_desc_atom, R_d_desc_atom = desc.from_R(R,lat_and_inv=lat_and_inv,
                 callback=None)
