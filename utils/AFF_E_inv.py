@@ -1463,7 +1463,8 @@ class AFFTrain(object):
         loss_rec = []
         
         #add th ebacktracking line search to find the best step size 
-        t = 0.5
+        t = 0.3 # adjusting parameter for ebacktracking line search:q
+        
         beta = 0.1
         R_initial = task['R_train'][ind_initial,None] #+ (np.random.normal(size = n_atoms*3)*1e-15).reshape(1,-1,3)
         c_lr = lr
