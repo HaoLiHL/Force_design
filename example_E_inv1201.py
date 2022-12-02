@@ -131,7 +131,7 @@ while n_loop<5:
     atomic_number = dataset['z']
    
     computational_method = ['PBE', 'PBE', '6-31G']
-    new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target[None], atomic_number, computational_method)
+    new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target, atomic_number, computational_method)
     #cost = np.sum(np.abs(np.concatenate(new_F)-np.concatenate(F_target)))
     #cost = np.abs(E_target-new_E)
     
