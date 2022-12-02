@@ -142,7 +142,7 @@ while n_loop<30:
     if new_E[0]*ev_to_kcal == 0:
         print("simulation fail, stop!")
         break
-
+    print("current predicted energy is ",E_best)
     print("current real energy is ",new_E[0]*ev_to_kcal)
     print('new_E,new_F ',new_F)
 
@@ -153,7 +153,7 @@ print('REAL E Record', Real_E_record)
 np.save('Real_E_record.npy', Real_E_record) 
 
 
-print('Predict E Record', Real_E_record) 
+print('Predict E Record', Predict_E_record) 
 np.save('Predict_E_record.npy', Predict_E_record) 
     # Record1=gdml_train.inverseE( task1,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-7,c=1e7)
     
