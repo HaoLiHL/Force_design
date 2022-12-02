@@ -73,7 +73,7 @@ AFF_E_inv.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
 atomic_number = dataset['z']
 
 computational_method = ['PBE', 'PBE', '6-31G']
-new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target[None], atomic_number, computational_method)
+new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target, atomic_number, computational_method)
 
 
 ev_to_kcal = 23.060541945329334
@@ -94,7 +94,7 @@ while n_loop<5:
     print('The '+repr(n_loop)+'-th loop \n')
     
     n_train = task['R_train'].shape[0]
-    task['R_train'] = np.append(task['R_train'],R_target[None]).reshape(n_train+1,12,-1)
+    task['R_train'] = np.append(task['R_train'],R_target).reshape(n_train+1,12,-1)
     
     task['F_train'] = np.append(task['F_train'],new_F).reshape(n_train+1,12,-1)
     
