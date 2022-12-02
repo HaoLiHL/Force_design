@@ -52,7 +52,7 @@ initial = 0
 print('start from',task["E_train"][initial])
 
     
-Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=1,num_step = 10)
+Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=1,num_step = 10)
     
 #Record=gdml_train.inverseE( task1,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=1,num_step = 10)
 
@@ -108,7 +108,7 @@ while n_loop<5:
     
     
     initial=n_train
-    Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=1,num_step = 10)
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=1,num_step = 10)
      
     R_target = Record['R_best']
     E_var_rec =Record['E_var_rec']
