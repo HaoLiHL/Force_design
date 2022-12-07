@@ -104,12 +104,12 @@ while n_loop<30:
     #AFF_train=AFF.AFFTrain()
     #candid_range = np.exp(np.arange(-5,5,1))
     candid_range = np.exp(np.arange(-2,3,1))
-    task['lam'] = 1e-10
+    task['lam'] = 1e-15
     trained_model = AFF_train.train(task,sig_candid_F = candid_range)
     
     
     initial=n_train
-    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-5,c=0.1,num_step = 10)
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-5,c=0.1,num_step = 20)
      
     R_target = Record['R_best']
     E_var_rec =Record['E_var_rec']
