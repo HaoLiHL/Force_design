@@ -17,7 +17,7 @@ from utils import AFF_E_inv
 
 #dataset=np.load('benzene_old_dft.npz')
 #dataset=np.load('uracil_dft.npz')
-dataset=np.load('uracil_dft_mu.npz')
+dataset=np.load('./dataset/Salicylic_acid.npz')
 #dataset=np.load('H2CO_mu.npz')
 #dataset=np.load('new_glucose.npz')
 
@@ -41,18 +41,18 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 # np.save('trained_model1.npy', trained_model) 
 
 
-task=np.load('saved_model/task_1128.npy',allow_pickle=True).item()
-trained_model = np.load('saved_model/trained_model1128.npy',allow_pickle=True).item()
+task=np.load('saved_model/task_salic.npy',allow_pickle=True).item()
+trained_model = np.load('saved_model/trained_model_salic.npy',allow_pickle=True).item()
 #E_target=max(task1['E_train'])[0]+100
-E_target = -257000
+E_target = -13000
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
-initial = 198
+initial = 1
 print('start from',task["E_train"][initial])
 
     
-Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=0.5,num_step = 10)
+Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-5,c=0.1,num_step = 10)
     
 #Record=gdml_train.inverseE( task1,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=1,num_step = 10)
 
@@ -76,7 +76,7 @@ computational_method = ['PBE', 'PBE', '6-31G']
 new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target, atomic_number, computational_method)
 
 
-ev_to_kcal = 23.060541945329334
+ev_to_kcal = 1
 #print(np.array(new_F).shape)
 #print(new_E.shape)
 #cost = np.sum(np.abs(np.concatenate(new_E)))
@@ -85,7 +85,7 @@ print("current real energy is ",new_E[0]*ev_to_kcal)
 print('new_E,new_F ',new_F)
 
 n_loop = 0
-
+n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Predict_E_record = [task["E_train"][initial][0],E_best]
 Real_loss_record = []
@@ -95,9 +95,9 @@ while n_loop<30:
     print('The '+repr(n_loop)+'-th loop \n')
     
     n_train = task['R_train'].shape[0]
-    task['R_train'] = np.append(task['R_train'],R_target).reshape(n_train+1,12,-1)
+    task['R_train'] = np.append(task['R_train'],R_target).reshape(n_train+1,n_atom,-1)
     
-    task['F_train'] = np.append(task['F_train'],new_F).reshape(n_train+1,12,-1)
+    task['F_train'] = np.append(task['F_train'],new_F).reshape(n_train+1,n_atom,-1)
     
     task['E_train'] = np.append(task['E_train'],np.array(new_E[0]*ev_to_kcal)).reshape(-1,1)
     
@@ -109,7 +109,7 @@ while n_loop<30:
     
     
     initial=n_train
-    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.1,lr=1e-7,c=0.1,num_step = 10)
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-5,c=0.1,num_step = 10)
      
     R_target = Record['R_best']
     E_var_rec =Record['E_var_rec']
@@ -150,11 +150,11 @@ while n_loop<30:
     
 print('-------finished-------- \n')
 print('REAL E Record', Real_E_record) 
-np.save('Real_E_record.npy', Real_E_record) 
+np.save('Real_E_record_sali.npy', Real_E_record) 
 
 
 print('Predict E Record', Predict_E_record) 
-np.save('Predict_E_record.npy', Predict_E_record) 
+np.save('Predict_E_record_sali.npy', Predict_E_record) 
     # Record1=gdml_train.inverseE( task1,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-7,c=1e7)
     
     # R_target1 = Record1['R_last']
