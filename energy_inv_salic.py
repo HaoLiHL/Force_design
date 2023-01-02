@@ -155,6 +155,9 @@ np.save('Real_E_record_sali.npy', Real_E_record)
 
 print('Predict E Record', Predict_E_record) 
 np.save('Predict_E_record_sali.npy', Predict_E_record) 
+
+print('save the proposed R')
+np.save('proposed_R_salic.npy',  task) 
     # Record1=gdml_train.inverseE( task1,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-7,c=1e7)
     
     # R_target1 = Record1['R_last']

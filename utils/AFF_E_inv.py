@@ -1492,6 +1492,10 @@ class AFFTrain(object):
             print('*** predicted_mean is',cur_pred_mean)
             print('*** predicted_variance is',cur_pred_var[0][0])
             
+            constant_theta = trained_model['theta_opt']*trained_model['E_train_std'] + trained_model['E_train_mean']
+
+            print('*** current theta_hat is,', constant_theta)
+            
 
             if not loss_rec or current_loss < min(loss_rec):
                 R_best = R_initial.copy()
