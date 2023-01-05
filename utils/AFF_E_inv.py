@@ -1519,6 +1519,7 @@ class AFFTrain(object):
             R_design.append(R_initial)
             
             count +=1 
+            
         return {'R_best':R_best,'E_var_rec':E_var_rec,'E_best':E_best,'E_predict_rec':E_predict_rec,'loss_rec':loss_rec,'loss_best':loss_best,'R_design':np.array(R_design)}
       
     

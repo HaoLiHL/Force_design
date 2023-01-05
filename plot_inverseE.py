@@ -114,3 +114,31 @@ ax.set_title('c = 0.001')
 plt.show()
 
 
+# salic acid c is 0.01 for first loop , then 0.001 
+real_E = [-13477.8941838182, -13474.7828093186, -13474.080263758, -13472.6040433706, -13470.4845820429, -13464.9271783512, -13447.3936958204, -13339.7930673714, -13339.7930673714, -13339.7930673714, -13339.7930673714, -13339.7930673714]
+predict_E = [-13477.8941838182, -13476.1088891, -13474.219972562893, -13472.742014114268, -13470.70622408398, -13465.923292076002, -13452.694395879713, -13414.305617998656, -13339.793067760314, -13339.793067566028, -13339.793067500344, -13339.793067468705]
+fig, ax = plt.subplots((1))
+
+#plt.plot(np.abs(E_predict_rec))
+ax.plot(np.arange(len(real_E)),-np.array(real_E).reshape(-1), color = 'r',marker = 'o',label="real")
+ax.plot(np.arange(len(predict_E)),-np.array(predict_E).reshape(-1), color = 'b',marker = '.',label="predict")
+#ax.axhline(y=13000, color='r', linestyle='--', label = 'target')
+ax.axhline(y=13477.894183, color='b', linestyle='--', label = 'minimum value from training')
+ax.axhline(y=13479.138923046, color='b', linestyle='--', label = 'maximum value from training')
+ax.set_xlabel('number of evaluation')
+ax.set_ylabel('real designed energy from simulator')
+ax.legend()
+#ax.plot(np.arange(len(E_var_rec1)),np.array(E_var_rec1).reshape(-1), color = 'b')
+ax.set_title('c = 0.001')
+
+
+plt.show()
+
+
+
+
+
+
+
+
+
