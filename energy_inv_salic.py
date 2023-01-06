@@ -109,7 +109,7 @@ while n_loop<10:
     
     
     initial=n_train
-    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-5,c=0.001,num_step = 20)
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.0001,num_step = 20)
      
     R_target = Record['R_best']
     E_var_rec =Record['E_var_rec']
