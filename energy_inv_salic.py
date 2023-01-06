@@ -44,7 +44,7 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 task=np.load('saved_model/task_salic.npy',allow_pickle=True).item()
 trained_model = np.load('saved_model/trained_model_salic.npy',allow_pickle=True).item()
 #E_target=max(task1['E_train'])[0]+100
-E_target = -13350
+E_target = -13000
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
@@ -109,7 +109,7 @@ while n_loop<10:
     
     
     initial=n_train
-    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-5,c=0.01,num_step = 20)
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-5,c=0.001,num_step = 20)
      
     R_target = Record['R_best']
     E_var_rec =Record['E_var_rec']
