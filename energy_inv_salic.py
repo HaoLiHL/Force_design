@@ -89,7 +89,7 @@ n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Predict_E_record = [task["E_train"][initial][0],E_best]
 Real_loss_record = []
-while n_loop<15:
+while n_loop<10:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
@@ -111,7 +111,7 @@ while n_loop<15:
     initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-5,c=0.001,num_step = 10)
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-6,c=0.01,num_step = 10)
      
     R_target = Record['R_best']
     E_var_rec =Record['E_var_rec']
