@@ -44,7 +44,7 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 task=np.load('saved_model/task_salic.npy',allow_pickle=True).item()
 trained_model = np.load('saved_model/trained_model_salic.npy',allow_pickle=True).item()
 #E_target=max(task1['E_train'])[0]+100
-E_target = -13000
+E_target = -13400
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
@@ -87,9 +87,9 @@ print('new_E,new_F ',new_F)
 n_loop = 0
 n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
-Predict_E_record = [task["E_train"][initial][0],E_best]
+Predict_E_record = [task["E_train"][initial][0],E_best[0]]
 Real_loss_record = []
-while n_loop<20:
+while n_loop<10:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
