@@ -114,7 +114,7 @@ ax.set_title('c = 0.001')
 plt.show()
 
 
-# salic acid c is 0.01 for first loop , then 0.001 
+# ** salic acid c is 0.001 for first loop , then 0.01, initial 398 
 real_E = [-13477.8941838182, -13474.7828093186, -13474.080263758, -13472.6040433706, -13470.4845820429, -13464.9271783512, -13447.3936958204, -13339.7930673714, -13339.7930673714, -13339.7930673714, -13339.7930673714, -13339.7930673714]
 predict_E = [-13477.8941838182, -13476.1088891, -13474.219972562893, -13472.742014114268, -13470.70622408398, -13465.923292076002, -13452.694395879713, -13414.305617998656, -13339.793067760314, -13339.793067566028, -13339.793067500344, -13339.793067468705]
 fig, ax = plt.subplots((1))
@@ -134,6 +134,50 @@ ax.set_title('c = 0.001')
 
 plt.show()
 
+# ** salic acid c is 0.001 for first loop , then 0.01, initial 396
+real_E = [-13477.9150077829, -13473.3463547704, -13472.0881554096, -13469.8479326399, -13460.5665687369, -13460.5665687369, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725]
+
+predict_E = [-13477.9150077829, -13475.40775768, -13472.44387962135, -13470.096654852248, -13463.114037068703, -13460.566568818924, -13439.10629877781, -13417.822969102514, -13417.822968787337, -13417.822968682029, -13417.82296863005, -13417.822968598097, -13417.822968577231, -13417.822968562246, -13417.822968551136, -13417.82296854232, -13417.822968535407, -13417.822968529634, -13417.822968523966, -13417.822968521932, -13417.822968517925, -13417.822968513725]
+fig, ax = plt.subplots((1))
+
+#plt.plot(np.abs(E_predict_rec))
+ax.plot(np.arange(len(real_E)),-np.array(real_E).reshape(-1), color = 'r',marker = 'o',label="real")
+ax.plot(np.arange(len(predict_E)),-np.array(predict_E).reshape(-1), color = 'b',marker = '.',label="predict")
+#ax.axhline(y=13000, color='r', linestyle='--', label = 'target')
+ax.axhline(y=13477.894183, color='b', linestyle='--', label = 'minimum value from training')
+ax.axhline(y=13479.138923046, color='b', linestyle='--', label = 'maximum value from training')
+ax.set_xlabel('number of evaluation')
+ax.set_ylabel('real designed energy from simulator')
+ax.legend()
+#ax.plot(np.arange(len(E_var_rec1)),np.array(E_var_rec1).reshape(-1), color = 'b')
+ax.set_title('c = 0.01, initial 396')
+
+
+plt.show()
+
+
+# ** salic acid c is 0.001 for first loop , then 0.001, initial 396, target 13400
+real_E = [-13477.9150077829, -13477.40149292, -13475.1656999049, -13472.2860361907, -13464.2453360536, -13454.4231769531, -13438.6667866173, -13418.731348135, -13402.1459067965, -13400.0275424556, -13400.0202417105, -13400.0156116581]
+
+predict_E = [-13477.9150077829, -13477.593321196446, -13475.27717775623, -13473.12773090812, -13465.713433948122, -13457.206290390144, -13443.314896332407, -13424.51504275465, -13405.205166181144, -13400.138803031752, -13400.020201560219, -13400.015571257036]
+
+fig, ax = plt.subplots((1))
+
+#plt.plot(np.abs(E_predict_rec))
+ax.plot(np.arange(len(real_E)),-np.array(real_E).reshape(-1), color = 'r',marker = 'o',label="real")
+ax.plot(np.arange(len(predict_E)),-np.array(predict_E).reshape(-1), color = 'b',marker = '.',label="predict")
+#ax.axhline(y=13000, color='r', linestyle='--', label = 'target')
+ax.axhline(y=13477.894183, color='b', linestyle='--', label = 'minimum value from training')
+ax.axhline(y=13479.138923046, color='b', linestyle='--', label = 'maximum value from training')
+ax.axhline(y=13400, color='g', linestyle='--', label = 'target')
+ax.set_xlabel('number of evaluation')
+ax.set_ylabel('real designed energy from simulator')
+ax.legend()
+#ax.plot(np.arange(len(E_var_rec1)),np.array(E_var_rec1).reshape(-1), color = 'b')
+ax.set_title('c = 0.001, initial 396,target 13400')
+
+
+plt.show()
 
 
 

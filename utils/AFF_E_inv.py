@@ -1385,6 +1385,21 @@ class AFFTrain(object):
                 callback=None,
             )
         
+        R_star=self._assemble_kernel_mat_E(
+                n_type,
+                R_desc_val_atom1,
+                R_d_desc_val_atom1,
+                R_desc_val_atom1,
+                R_d_desc_val_atom1,
+                tril_perms_lin,
+                tril_perms_lin_mirror,
+                sig_optim,
+                desc,
+                use_E_cstr=task['use_E_cstr'],
+                col_idxs= np.s_[:],
+                callback=None,
+            )
+        
        
         lam = task['lam']
         #lam = 1e-10
@@ -1394,7 +1409,7 @@ class AFFTrain(object):
         L = sp.linalg.cho_factor(R_cor1, lower = True)
         
         R_inv_r = sp.linalg.cho_solve(L,r_T.T)
-        correlation = 1 - r_T @ R_inv_r + lam
+        correlation = R_star - r_T @ R_inv_r + lam
         predicted_var = var_square_opt * correlation
         gradient_var = -2 * c *  delta @ R_inv_r * var_square_opt
         loss = np.abs(E_pred-E_target)**2 + c * predicted_var
