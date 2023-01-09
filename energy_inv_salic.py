@@ -44,7 +44,7 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 task=np.load('saved_model/task_salic.npy',allow_pickle=True).item()
 trained_model = np.load('saved_model/trained_model_salic.npy',allow_pickle=True).item()
 #E_target=max(task1['E_train'])[0]+100
-E_target = -13000
+E_target = -13400
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
