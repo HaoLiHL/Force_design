@@ -1404,6 +1404,7 @@ class AFFTrain(object):
     
     def inverseE_new(self, task,trained_model,E_target, ind_initial,tol_MAE, lr,c,
             num_step=10,
+            random_val = 1e-2,
             cprsn_callback=None,
             save_progr_callback=None,  # TODO: document me
             callback=None):
@@ -1442,7 +1443,7 @@ class AFFTrain(object):
         lat_and_inv = None
         R = task['R_train']  #.reshape(n_train, -1) 
         
-        R_val_atom=task['R_train'][ind_initial,None] + (np.random.normal(size = n_atoms*3)*1e-2).reshape(1,-1,3)
+        R_val_atom=task['R_train'][ind_initial,None] + (np.random.normal(size = n_atoms*3)*random_val).reshape(1,-1,3)
         
         R_desc_atom, R_d_desc_atom = desc.from_R(R,lat_and_inv=lat_and_inv,
                 callback=None)
