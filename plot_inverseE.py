@@ -136,10 +136,8 @@ plt.show()
 
 # ** salic acid c is 0.001 for first loop , then 0.01, initial 396
 real_E = [-13477.9150077829, -13473.3463547704, -13472.0881554096, -13469.8479326399, -13460.5665687369, -13460.5665687369, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725, -13417.8229684725]
-
 predict_E = [-13477.9150077829, -13475.40775768, -13472.44387962135, -13470.096654852248, -13463.114037068703, -13460.566568818924, -13439.10629877781, -13417.822969102514, -13417.822968787337, -13417.822968682029, -13417.82296863005, -13417.822968598097, -13417.822968577231, -13417.822968562246, -13417.822968551136, -13417.82296854232, -13417.822968535407, -13417.822968529634, -13417.822968523966, -13417.822968521932, -13417.822968517925, -13417.822968513725]
 fig, ax = plt.subplots((1))
-
 #plt.plot(np.abs(E_predict_rec))
 ax.plot(np.arange(len(real_E)),-np.array(real_E).reshape(-1), color = 'r',marker = 'o',label="real")
 ax.plot(np.arange(len(predict_E)),-np.array(predict_E).reshape(-1), color = 'b',marker = '.',label="predict")
@@ -150,9 +148,7 @@ ax.set_xlabel('number of evaluation')
 ax.set_ylabel('real designed energy from simulator')
 ax.legend()
 #ax.plot(np.arange(len(E_var_rec1)),np.array(E_var_rec1).reshape(-1), color = 'b')
-ax.set_title('c = 0.01, initial 396')
-
-
+ax.set_title('c = 0.001, initial 396')
 plt.show()
 
 
@@ -175,9 +171,8 @@ ax.set_ylabel('real designed energy from simulator')
 ax.legend()
 #ax.plot(np.arange(len(E_var_rec1)),np.array(E_var_rec1).reshape(-1), color = 'b')
 ax.set_title('c = 0.001, initial 396,target 13400')
-
-
 plt.show()
+
 
 # ********* ASPIRIN *************
 # initial 190, c 0.1.
@@ -226,6 +221,29 @@ ax.set_title('c = 0.1, initial 190,target 17600')
 
 plt.show()
 
+# ********* ASPIRIN *************
+# initial 200, c 0.1. lr 1e-3, target 16000
+real_E = [-17625.9829083243, -17613.9280460495, -17611.0081987303, -17605.4401281371, -17602.0251286731, -17592.7095956627, -17583.6958847173, -17557.1875303881, -17536.5105243268, -17532.0318975945, -17522.6478510409, -17513.8290114128, -17513.8290114128, -17513.8290114128, -17513.8290114128, -17513.8290114128]
+
+predict_E =  [-17625.9829083243, -17623.58410421844, -17613.48555063823, -17607.471282906245, -17603.444818735767, -17597.441760664202, -17589.27238332936, -17578.732831650897, -17553.56392951537, -17533.786097598084, -17525.402096568152, -17516.33582482469, -17514.102626233493, -17513.982786579138, -17513.935949234667, -17513.910982279314]
+
+fig, ax = plt.subplots((1))
+
+#plt.plot(np.abs(E_predict_rec))
+ax.plot(np.arange(len(real_E)),-np.array(real_E).reshape(-1), color = 'r',marker = 'o',label="real")
+ax.plot(np.arange(len(predict_E)),-np.array(predict_E).reshape(-1), color = 'b',marker = '.',label="predict")
+#ax.axhline(y=13000, color='r', linestyle='--', label = 'target')
+ax.axhline(y=17625.34, color='b', linestyle='--', label = 'minimum value from training')
+ax.axhline(y=17626.32, color='b', linestyle='--', label = 'maximum value from training')
+#ax.axhline(y=17600, color='g', linestyle='--', label = 'target')
+ax.set_xlabel('number of evaluation')
+ax.set_ylabel('real designed energy from simulator')
+ax.legend()
+#ax.plot(np.arange(len(E_var_rec1)),np.array(E_var_rec1).reshape(-1), color = 'b')
+ax.set_title('c = 0.1, initial 200,target 16000')
+
+
+plt.show()
 
 
 
