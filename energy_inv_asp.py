@@ -48,7 +48,7 @@ E_target = -18000
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
-initial = 1
+initial = 2
 print('start from',task["E_train"][initial])
 
     
