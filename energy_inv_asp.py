@@ -48,7 +48,7 @@ E_target = -18000
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
-initial = 200
+initial = 1
 print('start from',task["E_train"][initial])
 
     
@@ -89,7 +89,7 @@ n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Predict_E_record = [task["E_train"][initial][0],E_best[0]]
 Real_loss_record = []
-while n_loop<20:
+while n_loop<10:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
