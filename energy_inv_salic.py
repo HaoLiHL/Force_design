@@ -48,11 +48,11 @@ E_target = -13500
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
-initial = 396
+initial = 1
 print('start from',task["E_train"][initial])
 
     
-Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=0.1,num_step = 15,random_val = 1e-2)
+Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-2,c=0.1,num_step = 15,random_val = 1e-2)
 #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.001,num_step = 10,random_val = 1e-2)
       
 
@@ -109,7 +109,7 @@ while n_loop<10:
     
     
     initial=n_train
-    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=0.01,num_step = 15)
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-2,c=0.01,num_step = 15)
        
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-5,c=0.001,num_step = 20,random_val = 1e-2)
      
