@@ -44,15 +44,15 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 task=np.load('saved_model/task_asp.npy',allow_pickle=True).item()
 trained_model = np.load('saved_model/trained_model_asp.npy',allow_pickle=True).item()
 #E_target=max(task1['E_train'])[0]+100
-E_target = -17700
+E_target = -17650
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
-initial = 1
+initial = 101
 print('start from',task["E_train"][initial])
 
     
-Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.8,num_step = 5,random_val = 1e-2)
+Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=0.8,num_step = 5,random_val = 1e-4)
     
 #Record=gdml_train.inverseE( task1,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=1,num_step = 10)
 
@@ -89,7 +89,7 @@ n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Predict_E_record = [task["E_train"][initial][0],E_best[0]]
 Real_loss_record = []
-while n_loop<5:
+while n_loop<10:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
@@ -111,7 +111,7 @@ while n_loop<5:
     initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=0.8,num_step = 30,random_val = 1e-2)
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=0.8,num_step = 30,random_val = 1e-4)
      
     R_target = Record['R_best']
     E_var_rec =Record['E_var_rec']
