@@ -44,7 +44,7 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 task=np.load('saved_model/task_asp.npy',allow_pickle=True).item()
 trained_model = np.load('saved_model/trained_model_asp.npy',allow_pickle=True).item()
 #E_target=max(task1['E_train'])[0]+100
-E_target = -18000
+E_target = -17700
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
@@ -111,7 +111,7 @@ while n_loop<10:
     initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=1,num_step = 30,random_val = 1e-2)
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=0.1,num_step = 30,random_val = 1e-2)
      
     R_target = Record['R_best']
     E_var_rec =Record['E_var_rec']
