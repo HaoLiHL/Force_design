@@ -61,8 +61,8 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 # np.save('./dataset/trained_model_asp_sub.npy', trained_model) 
 
 
-task=np.load('saved_model/task_asp_sub.npy',allow_pickle=True).item()
-trained_model = np.load('saved_model/trained_model_asp_sub.npy',allow_pickle=True).item()
+task=np.load('dataset/task_asp_sub.npy',allow_pickle=True).item()
+trained_model = np.load('dataset/trained_model_asp_sub.npy',allow_pickle=True).item()
 #E_target=max(task1['E_train'])[0]+100
 E_target = -17630
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
