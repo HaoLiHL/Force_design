@@ -103,7 +103,8 @@ R_target = np.array([-6.6875817508,	6.9175307365,	-1.3227916831,
 -4.8757541469,	3.7149303727,	-1.5912215439,
 -6.8577189769,	3.5235251884,	-2.7984240103]).reshape(1,21,3)
 
-
+# cur_predict = AFF_train.predict(task,R_target,trained_model)
+# print(cur_predict)
 
 AFF_E_inv.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
 # 
