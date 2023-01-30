@@ -109,7 +109,7 @@ while n_loop<5:
     
     
     initial=n_train
-    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-2,c=0.01,num_step = 15,random_val=1e-2 )
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-4,c=0.01,num_step = 15,random_val=1e-2 )
        
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-5,c=0.001,num_step = 20,random_val = 1e-2)
      
