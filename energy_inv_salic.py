@@ -48,7 +48,7 @@ E_target = -13500
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
-initial = 0
+initial = 1
 print('start from',task["E_train"][initial])
 
     
@@ -103,7 +103,7 @@ while n_loop<5:
     
     #AFF_train=AFF.AFFTrain()
     #candid_range = np.exp(np.arange(-5,5,1))
-    candid_range = np.exp(np.arange(-2,5,1))
+    candid_range = np.exp(np.arange(-5,5,1))
     #task['lam'] = 1e-10
     trained_model = AFF_train.train(task,sig_candid_F = candid_range)
     
