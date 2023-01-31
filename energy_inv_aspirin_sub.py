@@ -24,7 +24,7 @@ from utils import AFF_E_inv
 
 # #dataset=np.load('benzene_old_dft.npz')
 # #dataset=np.load('uracil_dft.npz')
-# dataset=np.load('./dataset/aso_hao.npz')
+#dataset=np.load('./dataset/aso_hao.npz')
 # #dataset=np.load('H2CO_mu.npz')
 # #dataset=np.load('new_glucose.npz')
 
@@ -39,7 +39,8 @@ from utils import AFF_E_inv
 #                     theory =dataset['theory'],md5 = dataset['theory'],type =dataset['type']  )
         
 
-dataset_sub=np.load('./dataset/aso_hao_sub.npz')       
+dataset_sub=np.load('./dataset/aso_hao_sub.npz')    
+#dataset_sub=np.load('./dataset/aso_hao.npz')        
 
 AFF_train = AFF_E_inv.AFFTrain()
 
@@ -51,10 +52,10 @@ n_train=200
 print(' The N_train is '+repr(n_train)+'--------------------')
 #task=np.save('task_test.npy', task)
 #task_test{}.npy
-# task1=AFF_train.create_task(dataset_sub,n_train,dataset_sub,100,200,10,1e-15)
-# candid_range = np.exp(np.arange(-5,3,1))
-# # #candid_range = np.arange(0.1,0.7,0.1)
-# # #candid_range = np.arange(1,100,10)
+# task1=AFF_train.create_task(dataset_sub,n_train,dataset_sub,100,100,10,1e-5)
+# candid_range = np.exp(np.arange(-5,5,1))
+# # # # #candid_range = np.arange(0.1,0.7,0.1)
+# # # # #candid_range = np.arange(1,100,10)
 # trained_model = AFF_train.train(task1,candid_range)
 
 # np.save('./dataset/task_asp_sub.npy', task1) 
@@ -68,13 +69,13 @@ E_target = -17630
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
-initial = 1
+initial = 3
 print('start from',task["E_train"][initial])
 
     
-Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-4,c=1,num_step = 20,random_val = 1e-4)
+Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=1e-5,lr=1e-3,c=0.01,num_step = 5,random_val =1e-4)
     
-#Record=gdml_train.inverseE( task1,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=1,num_step = 10)
+#Record=AFF_train.inverseE( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-25,c=1,num_step = 10)
 
 #np.save('saved_model/Record_1128.npy', Record) 
 #Record=np.load('saved_model/Record_1128.npy',allow_pickle=True).item()
@@ -131,7 +132,7 @@ while n_loop<2:
     initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-4,c=1,num_step = 30,random_val = 1e-4)
+    Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=1e-5,lr=1e-3,c=0.1,num_step = 30,random_val = 1e-4)
      
     R_target = Record['R_best']
     E_var_rec =Record['E_var_rec']

@@ -1453,12 +1453,12 @@ class AFFTrain(object):
         tril_perms_lin_mirror = tril_perms_lin
         
         # tril_perms_lin stores a vectorized permuations of all 12 permuations' descriptor position
-        n_type=task['n_type']
+        
         
         lat_and_inv = None
         R = task['R_train']  #.reshape(n_train, -1) 
         
-        R_val_atom=task['R_train'][ind_initial,None] + (np.random.normal(size = n_atoms*3)*random_val).reshape(1,-1,3)
+        #R_val_atom=task['R_train'][ind_initial,None] + (np.random.normal(size = n_atoms*3)*random_val).reshape(1,-1,3)
         
         R_desc_atom, R_d_desc_atom = desc.from_R(R,lat_and_inv=lat_and_inv,
                 callback=None)
@@ -1466,10 +1466,10 @@ class AFFTrain(object):
         
         # R is a n_train * 36 matrix 
         E_pred=0
-        tem=0
+
         count = 0
         #for k in range(100):
-        R_last = None
+
         import math
         E_pred = math.inf
         #n_step = 10
@@ -1482,7 +1482,7 @@ class AFFTrain(object):
         t = 0.1 # adjusting parameter for ebacktracking line search:q
         
         beta = 0.1
-        R_initial = task['R_train'][ind_initial,None] #+ (np.random.normal(size = n_atoms*3)*1e-15).reshape(1,-1,3)
+        R_initial = task['R_train'][ind_initial,None] + (np.random.normal(size = n_atoms*3)*random_val).reshape(1,-1,3)
         c_lr = lr
         prev_loss = math.inf
         R_design = []
