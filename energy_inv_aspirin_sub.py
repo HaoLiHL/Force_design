@@ -69,7 +69,7 @@ E_target = -17630
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 print('target is',E_target)
    
-initial = 198
+initial = 12
 print('start from',task["E_train"][initial])
 
     
@@ -128,8 +128,8 @@ while n_loop<20:
     #task['lam'] = 1e-10
     trained_model = AFF_train.train(task,sig_candid_F = candid_range)
     
-    
-    initial=n_train
+    if new_E[0]<=task['E_train'][initial]:
+        initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
     Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=1e-5,lr=1e-3,c=0.1,num_step = 30,random_val = 1e-3)
