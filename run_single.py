@@ -96,7 +96,7 @@ R_target1 = np.array([2.1893727664,    0.6339981721,   -0.1655362427,
 # -6.8797724988,	4.448823306,	-2.4419602857,
 # -4.8757541469,	3.7149303727,	-1.5912215439,
 # -6.8577189769,	3.5235251884,	-2.7984240103]).reshape(1,21,3)
-R_target = task['R_train'][0,:,:].reshape(1,21,3)
+R_target = task['R_train'][0,:,:].reshape(1,12,3)
 # cur_predict = AFF_train.predict(task,R_target,trained_model)
 # print(cur_predict)
 
