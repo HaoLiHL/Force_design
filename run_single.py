@@ -17,7 +17,8 @@ from utils import AFF_E_inv
 
 #dataset=np.load('benzene_old_dft.npz')
 #dataset=np.load('uracil_dft.npz')
-dataset=np.load('./dataset/aso_hao.npz')
+#dataset=np.load('./dataset/aso_hao.npz')
+dataset=np.load('./uracil_dft_mu.npz')  
 #dataset=np.load('H2CO_mu.npz')
 #dataset=np.load('new_glucose.npz')
 
@@ -29,20 +30,13 @@ n_train=400
 #n_train=np.array([100])
 
 print(' The N_train is '+repr(n_train)+'--------------------')
-#task=np.save('task_test.npy', task)
-#task_test{}.npy
-# task1=gdml_train.create_task(dataset,n_train[i],dataset,400,500,10,1e-15)
-# candid_range = np.exp(np.arange(-5,3,1))
-# #candid_range = np.arange(0.1,0.7,0.1)
-# #candid_range = np.arange(1,100,10)
-# trained_model = gdml_train.train(task1,candid_range)
-
-# np.save('task11.npy', task1) 
-# np.save('trained_model1.npy', trained_model) 
 
 
-task=np.load('saved_model/task_asp.npy',allow_pickle=True).item()
-trained_model = np.load('saved_model/trained_model_asp.npy',allow_pickle=True).item()
+task=np.load('saved_model/task_1128.npy',allow_pickle=True).item()
+trained_model = np.load('saved_model/trained_model1128.npy',allow_pickle=True).item()
+
+# task=np.load('saved_model/task_asp.npy',allow_pickle=True).item()
+# trained_model = np.load('saved_model/trained_model_asp.npy',allow_pickle=True).item()
 #E_target=max(task1['E_train'])[0]+100
 E_target = -16000
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
@@ -52,7 +46,7 @@ initial = 200
 print('start from',task["E_train"][initial])
 
     
-Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=2e-3,c=0.1,num_step = 3,random_val = 1e-2)
+#Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=2e-3,c=0.1,num_step = 3,random_val = 1e-2)
     
 #Record=gdml_train.inverseE( task1,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-5,c=1,num_step = 10)
 
@@ -81,28 +75,28 @@ R_target1 = np.array([2.1893727664,    0.6339981721,   -0.1655362427,
        2.0430682970 ,  -3.0013832069 ,  -0.4950806971
     ]).reshape(1,21,3)
 
-R_target = np.array([-6.6875817508,	6.9175307365,	-1.3227916831,
--6.6573532277,	8.1922735181,	-0.7453349783,
--5.5532784481,	8.5806682903,	0.0367116703,
--4.4809645688,	7.695843713,	0.224044618,
--4.5131450959,	6.4201709308,	-0.3572496673,
--5.622940808,	6.0017558949,	-1.1370652845,
--7.5386423162,	6.5992907049,	-1.9261426888,
--7.4919297868,	8.8799946083,	-0.9003148223,
--5.5242135748,	9.572477407,	0.4959583087,
--3.6074212296,	7.9728918132,	0.8172434107,
--3.4316385698,	5.5631795834,	-0.0610758588,
--2.5776576418,	5.1106752128,	-1.1195903882,
--2.5872008333,	5.6204152279,	-2.2422920771,
--1.7326483065,	3.9809127912,	-0.6184163161,
--0.817296816,	3.8980087824,	-1.2205405504,
--2.3217831712,	3.0532928424,	-0.726579536,
--1.4886031493,	4.1078226584,	0.4462393581,
--5.7062830828,	4.6434264174,	-1.711113675,
--6.8797724988,	4.448823306,	-2.4419602857,
--4.8757541469,	3.7149303727,	-1.5912215439,
--6.8577189769,	3.5235251884,	-2.7984240103]).reshape(1,21,3)
-
+# R_target = np.array([-6.6875817508,	6.9175307365,	-1.3227916831,
+# -6.6573532277,	8.1922735181,	-0.7453349783,
+# -5.5532784481,	8.5806682903,	0.0367116703,
+# -4.4809645688,	7.695843713,	0.224044618,
+# -4.5131450959,	6.4201709308,	-0.3572496673,
+# -5.622940808,	6.0017558949,	-1.1370652845,
+# -7.5386423162,	6.5992907049,	-1.9261426888,
+# -7.4919297868,	8.8799946083,	-0.9003148223,
+# -5.5242135748,	9.572477407,	0.4959583087,
+# -3.6074212296,	7.9728918132,	0.8172434107,
+# -3.4316385698,	5.5631795834,	-0.0610758588,
+# -2.5776576418,	5.1106752128,	-1.1195903882,
+# -2.5872008333,	5.6204152279,	-2.2422920771,
+# -1.7326483065,	3.9809127912,	-0.6184163161,
+# -0.817296816,	3.8980087824,	-1.2205405504,
+# -2.3217831712,	3.0532928424,	-0.726579536,
+# -1.4886031493,	4.1078226584,	0.4462393581,
+# -5.7062830828,	4.6434264174,	-1.711113675,
+# -6.8797724988,	4.448823306,	-2.4419602857,
+# -4.8757541469,	3.7149303727,	-1.5912215439,
+# -6.8577189769,	3.5235251884,	-2.7984240103]).reshape(1,21,3)
+R_target = task['R_train'][0,:,:].reshape(1,21,3)
 # cur_predict = AFF_train.predict(task,R_target,trained_model)
 # print(cur_predict)
 
@@ -115,10 +109,13 @@ computational_method = ['PBE', 'PBE', '6-31G']
 new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target, atomic_number, computational_method)
 
 
-ev_to_kcal = 1
+#ev_to_kcal = 1
+ev_to_kcal = 23.060541945329334
+
 #print(np.array(new_F).shape)
 #print(new_E.shape)
 #cost = np.sum(np.abs(np.concatenate(new_E)))
 
 print("current real energy is ",new_E[0]*ev_to_kcal)
 print('new_E,new_F ',new_F)
+print( "real:", task['E_train'][0])
