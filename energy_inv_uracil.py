@@ -148,7 +148,7 @@ while n_loop<10:
     AFF_E_inv.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
     # 
     # atomic number shall be defined in the beginning of the program once as well
-    atomic_number = dataset_sub['z']
+    atomic_number = dataset['z']
    
     computational_method = ['PBE', 'PBE', '6-31G']
     new_E, new_F = AFF_E_inv.run_physics_baed_calculation(R_target, atomic_number, computational_method)
