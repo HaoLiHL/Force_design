@@ -26,14 +26,13 @@ n_train=100
 #n_train=np.array([100])
 
 print(' The N_train is '+repr(n_train)+'--------------------')
-#task=np.save('task_test.npy', task)
-#task_test{}.npy
-task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
 
 
-trained_model= AFF_train.train(task,np.arange(10,30,10),np.arange(0.1,1,0.1))
-np.save('saved_model/task_h2co.npy', task) 
-np.save('saved_model/trained_model_h2co.npy', trained_model) 
+
+# task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
+# trained_model= AFF_train.train(task,np.arange(10,30,10),np.arange(0.1,1,0.1))
+# np.save('saved_model/task_h2co.npy', task) 
+# np.save('saved_model/trained_model_h2co.npy', trained_model) 
 
 
 task=np.load('saved_model/task_h2co.npy',allow_pickle=True).item()
@@ -41,8 +40,8 @@ trained_model=np.load('saved_model/trained_model_h2co.npy',allow_pickle=True).it
 
 
 # E_target = -17630
-# print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
-# print('target is',E_target)
+print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
+#print('target is',E_target)
    
 initial = 0
 print('start from',task["E_train"][initial])
