@@ -57,7 +57,7 @@ R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c 
 # E_predict_rec =Record['E_predict_rec']
 # loss_rc = Record['loss_rec']
 
-F_predict_pro = F_predict.cpu().detach().numpy()
+#F_predict_pro = F_predict#.cpu().detach().numpy()
 R_target = R_proposed_tensor.cpu().detach().numpy()
 
 tensor_aff.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
