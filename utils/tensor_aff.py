@@ -1631,7 +1631,7 @@ class GDMLTrain(object):
         
         sig_optim= trained_model['sig_optim']
         alphas_opt= trained_model['alphas_opt']
-        sigma_2_hat= trained_model['sigma_2_hat']
+        sigma_2_hat= trained_model['S2_optim']
         #kernel_time_ave= trained_model['kernel_time_ave']
         
         n_train, n_atoms = task['R_train'].shape[:2]
