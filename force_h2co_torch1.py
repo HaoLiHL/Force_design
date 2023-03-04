@@ -28,12 +28,12 @@ n_train=100
 print(' The N_train is '+repr(n_train)+'--------------------')
 #task=np.save('task_test.npy', task)
 #task_test{}.npy
-# task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
+task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
 
 
-# trained_model= AFF_train.train(task,np.arange(10,30,10),np.arange(0.1,1,0.1))
-# np.save('saved_model/task_h2co.npy', task) 
-# np.save('saved_model/trained_model_h2co.npy', trained_model) 
+trained_model= AFF_train.train(task,np.arange(10,30,10),np.arange(0.1,1,0.1))
+np.save('saved_model/task_h2co.npy', task) 
+np.save('saved_model/trained_model_h2co.npy', trained_model) 
 
 
 task=np.load('saved_model/task_h2co.npy',allow_pickle=True).item()
