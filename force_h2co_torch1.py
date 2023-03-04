@@ -47,7 +47,7 @@ trained_model=np.load('saved_model/trained_model_h2co.npy',allow_pickle=True).it
 initial = 0
 print('start from',task["E_train"][initial])
 
-R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-5, n_iter = 50)   
+R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-5, n_iter = 100)   
 
 #np.save('saved_model/Record_1128.npy', Record) 
 #Record=np.load('saved_model/Record_1128.npy',allow_pickle=True).item()
