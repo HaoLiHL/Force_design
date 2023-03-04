@@ -1699,7 +1699,7 @@ class GDMLTrain(object):
             
             
         print("final F_predict",F_predict)
-        return R_val_tensor
+        return R_val_tensor,F_predict
 
   
         
@@ -2827,23 +2827,23 @@ def run_physics_baed_calculation(R_design, atomic_number, computational_method):
 # #n_train=np.array([200,600,1000,1400])
 # n_train=np.array([100])
 # for i in range(n_train.shape[0]):
-# #i=0
-#     print(' The N_train is '+repr(n_train[i])+'--------------------')
-#     # task=gdml_train.create_task(dataset,n_train[i],dataset,200,100,100,1e-12,use_E_cstr=False,batch_size=100,uncertainty=False)
-#     # # #task=np.load('task_test.npy',allow_pickle=True).item()
+#i=0
+    print(' The N_train is '+repr(n_train[i])+'--------------------')
+    # task=gdml_train.create_task(dataset,n_train[i],dataset,200,100,100,1e-12,use_E_cstr=False,batch_size=100,uncertainty=False)
+    # # #task=np.load('task_test.npy',allow_pickle=True).item()
     
-#     # # #task=np.load('task_benzene{}.npy'.format(i),allow_pickle=True).item()
-#     # task['uncertainty']=False
-#     # task['lam']=1e-13
+    # # #task=np.load('task_benzene{}.npy'.format(i),allow_pickle=True).item()
+    # task['uncertainty']=False
+    # task['lam']=1e-13
     
-#     # np.save('./saved_model/task_h2co_aff.npy', task)
-#     task=np.load('./saved_model/task_h2co_aff.npy',allow_pickle=True).item()
+    # np.save('./saved_model/task_h2co_aff.npy', task)
+    task=np.load('./saved_model/task_h2co_aff.npy',allow_pickle=True).item()
     
-#     #np.save('task_uracil_75_400{}.npy'.format(n_train[i]), task) 
-#     #sig_opt,sig_opt_E,alphas_opt = gdml_train.train(task,np.arange(10,100,10),np.arange(16,35,2))#uracil
-#     sig_opt,sig_opt_E,alphas_opt,kernel_time_ave,sigma_2_hat = gdml_train.train(task,np.arange(1,30,10),np.arange(0.1,1,0.1))#uracil
-#     #test_MAE=gdml_train.test(task,sig_opt,sig_opt_E,alphas_opt,kernel_time_ave)
-#     R_proposed_tensor = gdml_train.inverse(task,sig_opt,alphas_opt,sigma_2_hat,initial=1, c = 1e-5)
+    #np.save('task_uracil_75_400{}.npy'.format(n_train[i]), task) 
+    #sig_opt,sig_opt_E,alphas_opt = gdml_train.train(task,np.arange(10,100,10),np.arange(16,35,2))#uracil
+    sig_opt,sig_opt_E,alphas_opt,kernel_time_ave,sigma_2_hat = gdml_train.train(task,np.arange(1,30,10),np.arange(0.1,1,0.1))#uracil
+    #test_MAE=gdml_train.test(task,sig_opt,sig_opt_E,alphas_opt,kernel_time_ave)
+    R_proposed_tensor = gdml_train.inverse(task,sig_opt,alphas_opt,sigma_2_hat,initial=1, c = 1e-5)
 
 #np.save('task_test.npy', task) 
 #save_pet(task)   
