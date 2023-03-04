@@ -28,12 +28,12 @@ n_train=100
 print(' The N_train is '+repr(n_train)+'--------------------')
 #task=np.save('task_test.npy', task)
 #task_test{}.npy
-task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
+# task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
 
 
-trained_model= AFF_train.train(task,np.arange(10,30,10),np.arange(0.1,1,0.1))
-np.save('saved_model/task_h2co.npy', task) 
-np.save('saved_model/trained_model_h2co.npy', trained_model) 
+# trained_model= AFF_train.train(task,np.arange(10,30,10),np.arange(0.1,1,0.1))
+# np.save('saved_model/task_h2co.npy', task) 
+# np.save('saved_model/trained_model_h2co.npy', trained_model) 
 
 
 task=np.load('saved_model/task_h2co.npy',allow_pickle=True).item()
@@ -60,13 +60,13 @@ R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c 
 
 R_target = R_proposed_tensor.cpu().detach().numpy()
 
-AFF_train.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
+tensor_aff.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
 # 
 # atomic number shall be defined in the beginning of the program once as well
 atomic_number = dataset['z']
 
 computational_method = ['PBE', 'PBE', '6-31G']
-new_E, new_F = AFF_train.run_physics_baed_calculation(R_target, atomic_number, computational_method)
+new_E, new_F = tensor_aff.run_physics_baed_calculation(R_target, atomic_number, computational_method)
 
 
 ev_to_kcal = 1
