@@ -21,7 +21,7 @@ dataset=np.load('./dataset/h2c0_hao.npz')
 AFF_train = tensor_aff.GDMLTrain()
 
 print('---------uracil-----------200-1000-----------')
-n_train=100
+n_train=200
 #n_train=np.array([200,400,600,800,1000])
 #n_train=np.array([100])
 
@@ -29,10 +29,10 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 
 
 
-# task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
-# trained_model= AFF_train.train(task,np.arange(10,30,10),np.arange(0.1,1,0.1))
-# np.save('saved_model/task_h2co.npy', task) 
-# np.save('saved_model/trained_model_h2co.npy', trained_model) 
+task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
+trained_model= AFF_train.train(task,np.arange(10,20,5),np.arange(0.1,1,0.1))
+np.save('saved_model/task_h2co.npy', task) 
+np.save('saved_model/trained_model_h2co.npy', trained_model) 
 
 
 task=np.load('saved_model/task_h2co.npy',allow_pickle=True).item()
@@ -88,7 +88,7 @@ while n_loop<5:
     #AFF_train=AFF.AFFTrain()
     #candid_range = np.exp(np.arange(-5,5,1))
     #candid_range = np.exp(np.arange(-2,2,1))
-    candid_range = np.arange(10,30,10)
+    candid_range = np.arange(10,20,5)
     #task['lam'] = 1e-10
     trained_model = AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
     #AFF_train.train(task,sig_candid_F = candid_range)
@@ -99,12 +99,12 @@ while n_loop<5:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 100)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200,random_noise = 1e-4)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
 
-     #F_predict_pro = F_predict#.cpu().detach().numpy()
+      #F_predict_pro = F_predict#.cpu().detach().numpy()
     R_target = R_design_tensor.cpu().detach().numpy()
     #F_predict_loss = np.linalg.norm(F_predict)
    
@@ -148,35 +148,8 @@ print('Final Proposed Position',R_target)
 np.save('saved_model/Design_E_record_h2co.npy', Proposed_h2co) 
 
 
-# print('Predict E Record', Predict_E_record) 
-# np.save('Predict_E_record_asp.npy', Predict_E_record) 
 
-# print('save the proposed R')
-# np.save('proposed_R_asp.npy',  task) 
-    # Record1=gdml_train.inverseE( task1,trained_model,E_target,ind_initial=initial,tol_MAE=0.5,lr=1e-7,c=1e7)
-    
-    # R_target1 = Record1['R_last']
-    # E_var_rec1 =Record1['E_var_rec']
-    # E_predict_rec1 =Record1['E_predict_rec']
-    #{'R_last':R_last,'E_var_rec':E_var_rec,'E_predict_rec':E_predict_rec}
-    # n_sam=20
-    # R_target=np.empty((n_sam,12,3))
-    # for l in range(n_sam):
-    #     print(' 259950: it is the  '+repr(l)+'-th sample-------------------')
-    #     R_target[l,:,:]=gdml_train.inverseE( task1,sig_opt,theta_hat,alphas_opt,E_target,ind_initial=l,tol_MAE=0.03,lr=1e-12)
-    
-    #E_target1=-259950
-    
-    # R_target1=np.empty((n_sam,12,3))
-    # for l in range(n_sam):
-    #     print(' 259950: it is the  '+repr(l)+'-th sample-------------------')
-    #     R_target1[l,:,:]=gdml_train.inverseE( task1,sig_opt,theta_hat,alphas_opt,E_target1,ind_initial=l,tol_MAE=0.03)
-    
-        
-    #R_target=gdml_train.inverseE( task1,sig_opt,theta_hat,alphas_opt,E_target,ind_initial=0,tol_MAE=0.03)
-    
-#np.save('R_target_259920.npy', R_target) 
-#np.save('R_target_259950.npy', R_target1) 
+
 
 # import matplotlib.pyplot as plt
 # fig, ax = plt.subplots((2))
