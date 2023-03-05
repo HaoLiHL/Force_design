@@ -1627,7 +1627,7 @@ class GDMLTrain(object):
         
         
     
-    def inverse(self,task,trained_model,initial=0,c = 1, n_iter = 30):
+    def inverse(self,task,trained_model,initial=0,c = 1, n_iter = 30,random_noise = 1e-2):
         
         sig_optim= trained_model['sig_optim']
         alphas_opt= trained_model['alphas_opt']
@@ -1656,7 +1656,7 @@ class GDMLTrain(object):
         tril_perms_lin = (tril_perms + perm_offsets).flatten('F')
         #(np.random.normal(size = n_atoms*3)*1e-4).reshape(1,-1,3)
         np.random.seed(10)
-        R_val = task['R_train'][initial,:,:] + (np.random.normal(size = n_atoms*3)*1e-2).reshape(-1,3)
+        R_val = task['R_train'][initial,:,:] + (np.random.normal(size = n_atoms*3)*random_noise).reshape(-1,3)
         R_val_tensor = torch.from_numpy(R_val).type(torch.float64)
         R_train_tensor = torch.from_numpy(task['R_train']).type(torch.float64)
         index_diff_atom = task['index_diff_atom']

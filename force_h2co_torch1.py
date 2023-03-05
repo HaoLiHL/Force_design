@@ -98,10 +98,10 @@ while n_loop<3:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 50)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 50)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
-    R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-5, n_iter = 200)   
+    #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
 
      #F_predict_pro = F_predict#.cpu().detach().numpy()
     R_target = R_design_tensor.cpu().detach().numpy()
