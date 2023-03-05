@@ -95,6 +95,7 @@ while n_loop<5:
     
     if np.linalg.norm(new_F)<=np.linalg.norm(task['F_train'][initial,:,:]):
         initial=n_train
+    print('initial is ', initial)
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
