@@ -1619,7 +1619,7 @@ class GDMLTrain(object):
         
         loss = l1 + l2
         #print(l2)
-        print(' mean loss  '+repr(l1)+'variance loss  '+repr(l2/c))  
+        #print(' mean loss  '+repr(l1)+'variance loss  '+repr(l2/c))  
         #print(' mean loss  '+repr(loss))  
         return loss
         
@@ -1687,8 +1687,8 @@ class GDMLTrain(object):
             loss = self.loss(k_val_train, k_val_train,alpha_t,R,c_star,sigma_2_hat,F_predict,c,task)
             
             #loss = torch.norm(F_predict)
-            # if index%10 == 1:
-           # print(loss)
+            if index%20 == 1:
+                print(loss)
             #output = model(input)
             #loss = loss_fn(output, target)
             loss.backward()
