@@ -46,7 +46,7 @@ print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(tas
 initial = 0
 print('start from',task["E_train"][initial])
 
-R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-5, n_iter = 20)   
+R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-5, n_iter = 200)   
 
 #F_predict_pro = F_predict#.cpu().detach().numpy()
 R_target = R_proposed_tensor.cpu().detach().numpy()
@@ -73,7 +73,7 @@ n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:]),np.linalg.norm(new_F)**2]
 Real_loss_record = []
-while n_loop<2:
+while n_loop<5:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
@@ -98,7 +98,7 @@ while n_loop<2:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 20)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 100)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
