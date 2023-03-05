@@ -29,7 +29,7 @@ dataset=np.load('./dataset/Salicylic_acid.npz')
 AFF_train = tensor_aff.GDMLTrain()
 
 print('---------uracil-----------200-1000-----------')
-n_train=100
+n_train=200
 #n_train=np.array([200,400,600,800,1000])
 #n_train=np.array([100])
 
@@ -37,11 +37,11 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 
 
 
-task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
-candid_range = np.exp(np.arange(-2,5,1))
-trained_model= AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
-np.save('saved_model/task_sali.npy', task) 
-np.save('saved_model/trained_model_sali.npy', trained_model) 
+# task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
+# candid_range = np.exp(np.arange(-2,5,1))
+# trained_model= AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
+# np.save('saved_model/task_sali.npy', task) 
+# np.save('saved_model/trained_model_sali.npy', trained_model) 
 
 
 task=np.load('saved_model/task_sali.npy',allow_pickle=True).item()
@@ -117,7 +117,7 @@ while n_loop<10:
     R_target = R_design_tensor.cpu().detach().numpy()
     #F_predict_loss = np.linalg.norm(F_predict)
    
-   
+    print('THE Proposed Position',R_target)
     
     print('another one \n')
     print(R_target.shape)
