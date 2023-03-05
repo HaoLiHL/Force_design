@@ -139,7 +139,7 @@ while n_loop<5:
     print('current real force ',new_F,'\n')
 
     #print('new_E,new_F ',new_F)
-
+n_train = task['R_train'].shape[0]
 task['R_train'] = np.append(task['R_train'],R_target[None]).reshape(n_train+1,n_atom,-1)
 Proposed_h2co = {'R_design':R_target,'Real_F':new_F,'R_train':task['R_train']}    
 print('-------finished-------- \n')
