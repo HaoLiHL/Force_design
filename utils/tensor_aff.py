@@ -1118,7 +1118,11 @@ class GDMLTrain(object):
             #F_hat_val_E=(-np.matmul(K_r_all_e,alphas))-c
             # F_hat_val = F_hat_val1*y_std
             ae=np.mean(np.abs(  np.concatenate(F_hat_val_F)-np.concatenate(F_val_atom)))
+            RMSE_F=np.sqrt(np.mean((np.concatenate(F_hat_val_F)-np.concatenate(F_val_atom))**2))/np.std(np.concatenate(F_val_atom))
+            #print(' This is the  MAE of F='+repr(ae)) 
+            
             print(' This is '+repr(i)+'th task: MAE of F='+repr(ae)) 
+            print(' This is the  RMSE/std of F='+repr(RMSE_F)) 
             #ae=np.mean(np.abs(F_hat_val_F-F_val_atom))
             MSA[i]=ae
             
@@ -1687,8 +1691,10 @@ class GDMLTrain(object):
             loss = self.loss(k_val_train, k_val_train,alpha_t,R,c_star,sigma_2_hat,F_predict,c,task)
             
             #loss = torch.norm(F_predict)
+            
             if index%20 == 1:
                 print(loss)
+            
             #output = model(input)
             #loss = loss_fn(output, target)
             loss.backward()

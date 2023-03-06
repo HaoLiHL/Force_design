@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Created on Sat Mar  4 23:56:16 2023
+
+@author: lihao
+"""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 
 #!/usr/bin/env python3
@@ -14,7 +21,8 @@ from utils import tensor_aff
 
 #dataset=np.load('benzene_old_dft.npz')
 #dataset=np.load('uracil_dft.npz')
-dataset=np.load('./dataset/h2c0_hao.npz')
+#dataset=np.load('./dataset/h2c0_hao.npz')
+dataset=np.load('./dataset/aso_hao.npz')
 #dataset=np.load('H2CO_mu.npz')
 #dataset=np.load('new_glucose.npz')
 
@@ -30,25 +38,27 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 
 
 # task=AFF_train.create_task(dataset,n_train,dataset,200,100,100,1e-12)
-# trained_model= AFF_train.train(task,np.arange(10,20,5),np.arange(0.1,1,0.1))
-# np.save('saved_model/task_h2co.npy', task) 
-# np.save('saved_model/trained_model_h2co.npy', trained_model) 
+# candid_range = np.arange(10,30,10)
+# trained_model= AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
+# trained_model['S2_optim']
+# np.save('saved_model/task_asp.npy', task) 
+# np.save('saved_model/trained_model_asp.npy', trained_model) 
 
 
-task=np.load('saved_model/task_h2co.npy',allow_pickle=True).item()
-trained_model=np.load('saved_model/trained_model_h2co.npy',allow_pickle=True).item()
+task=np.load('saved_model/task_asp.npy',allow_pickle=True).item()
+trained_model=np.load('saved_model/trained_model_asp.npy',allow_pickle=True).item()
 
 
-# E_target = -17630
+# # E_target = -17630
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 #print('target is',E_target)
    
 initial = 0
 print('start from',task["E_train"][initial])
 
-R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-5, n_iter = 200)   
+R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-4, n_iter = 200,random_noise = 1e-4)   
 
-#F_predict_pro = F_predict#.cpu().detach().numpy()
+F_predict_pro = F_predict#.cpu().detach().numpy()
 R_target = R_proposed_tensor.cpu().detach().numpy()
 
 tensor_aff.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
@@ -73,7 +83,7 @@ n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:]),np.linalg.norm(new_F)**2]
 Real_loss_record = []
-while n_loop<5:
+while n_loop<10:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
@@ -88,7 +98,7 @@ while n_loop<5:
     #AFF_train=AFF.AFFTrain()
     #candid_range = np.exp(np.arange(-5,5,1))
     #candid_range = np.exp(np.arange(-2,2,1))
-    candid_range = np.arange(10,20,5)
+    candid_range = np.arange(10,30,10)
     #task['lam'] = 1e-10
     trained_model = AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
     #AFF_train.train(task,sig_candid_F = candid_range)
@@ -99,7 +109,7 @@ while n_loop<5:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200,random_noise = 1e-4)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-4, n_iter = 200,random_noise = 1e-4)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
@@ -108,7 +118,7 @@ while n_loop<5:
     R_target = R_design_tensor.cpu().detach().numpy()
     #F_predict_loss = np.linalg.norm(F_predict)
    
-   
+    print('THE Proposed Position',R_target)
     
     print('another one \n')
     print(R_target.shape)
@@ -145,7 +155,7 @@ Proposed_h2co = {'R_design':R_target,'Real_F':new_F,'R_train':task['R_train']}
 print('-------finished-------- \n')
 print('REAL E Record', Real_E_record) 
 print('Final Proposed Position',R_target)
-np.save('saved_model/Design_E_record_h2co.npy', Proposed_h2co) 
+np.save('saved_model/Design_E_record_asp.npy', Proposed_h2co) 
 
 
 
