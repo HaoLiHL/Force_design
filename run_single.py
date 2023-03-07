@@ -18,7 +18,7 @@ from utils import AFF_E_inv
 #dataset=np.load('benzene_old_dft.npz')
 #dataset=np.load('uracil_dft.npz')
 #dataset=np.load('./dataset/aso_hao.npz')
-dataset=np.load('./dataset/Salicylic_acid.npz.npz')  
+dataset=np.load('./dataset/Salicylic_acid.npz')  
 #dataset=np.load('H2CO_mu.npz')
 #dataset=np.load('new_glucose.npz')
 
