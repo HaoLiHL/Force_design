@@ -63,7 +63,7 @@ print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(tas
 initial = 0
 print('start from',task["E_train"][initial])
 
-R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-5, n_iter = 100,random_noise = 1e-4)   
+R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-5, n_iter = 40,random_noise = 1e-4)   
 
 F_predict_pro = F_predict#.cpu().detach().numpy()
 R_target = R_proposed_tensor.cpu().detach().numpy()
@@ -109,7 +109,10 @@ while n_loop<2:
     #candid_range = np.arange(10,30,10)
     #task['lam'] = 1e-10
     trained_model = AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
-    #AFF_train.train(task,sig_candid_F = candid_range)
+    if n_loop == 1:
+        np.save('saved_model/task_uracil_1_iter.npy', task) 
+        np.save('saved_model/trained_model_uracil_1_iter.npy', trained_model) 
+        #AFF_train.train(task,sig_candid_F = candid_range)
     
     if np.linalg.norm(new_F)<=np.linalg.norm(task['F_train'][initial,:,:]):
         initial=n_train
@@ -117,7 +120,7 @@ while n_loop<2:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-4, n_iter = 100,random_noise = 1e-4,step_size = 1e-14)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 50,random_noise = 1e-4,step_size = 1e-13)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
