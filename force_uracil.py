@@ -105,13 +105,13 @@ while n_loop<10:
     #AFF_train=AFF.AFFTrain()
     #candid_range = np.exp(np.arange(-5,5,1))
     #candid_range = np.exp(np.arange(-2,2,1))
-    candid_range = np.arange(10,100,70)
+    candid_range = np.arange(10,70,20)
     #candid_range = np.arange(10,30,10)
     #task['lam'] = 1e-10
     trained_model = AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
-    # if n_loop == 1:
-    #     np.save('saved_model/task_uracil_1_iter.npy', task) 
-    #     np.save('saved_model/trained_model_uracil_1_iter.npy', trained_model) 
+    if n_loop == 3:
+        np.save('saved_model/task_uracil_1_iter.npy', task) 
+        np.save('saved_model/trained_model_uracil_1_iter.npy', trained_model) 
         #AFF_train.train(task,sig_candid_F = candid_range)
     
     if np.linalg.norm(new_F)<=np.linalg.norm(task['F_train'][initial,:,:]):
@@ -120,7 +120,7 @@ while n_loop<10:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-10, n_iter = 60,random_noise = 1e-4,step_size = 1e-3)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-10, n_iter = 100,random_noise = 1e-4,step_size = 1e-3)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
