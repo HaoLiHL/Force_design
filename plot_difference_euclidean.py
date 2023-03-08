@@ -93,7 +93,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as plt_color
 fig = plt.figure() #调用figure创建一个绘图对象
 ax = fig.add_subplot(111)
-cax = ax.matshow(opt-opt2, cmap='bwr',vmin=-0.3, vmax=0.3)  #绘制热力图，从-1到1
+cax = ax.matshow(opt-proposed, cmap='bwr',vmin=-0.3, vmax=0.3)  #绘制热力图，从-1到1
 #cax = ax.matshow(opt-proposed, cmap='bwr',vmin=-0.3, vmax=0.3)  #绘制热力图，从-1到1
 
 #ax.axis('off')

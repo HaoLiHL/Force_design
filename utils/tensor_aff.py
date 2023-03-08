@@ -1623,7 +1623,7 @@ class GDMLTrain(object):
         
         loss = l1 + l2
         #print(l2)
-        print(' mean loss  '+repr(l1)+'variance loss  '+repr(l2/c))  
+        print(' mean loss  '+repr(l1.item())+'variance loss  '+repr(l2.item()/c))  
         #print(' mean loss  '+repr(loss))  
         return loss
         
