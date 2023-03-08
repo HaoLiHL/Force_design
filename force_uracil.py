@@ -60,7 +60,7 @@ trained_model=np.load('saved_model/trained_model_asp.npy',allow_pickle=True).ite
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 #print('target is',E_target)
    
-initial = 0
+initial = 30
 print('start from',task["E_train"][initial])
 
 R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-5, n_iter = 40,random_noise = 1e-4)   
@@ -88,9 +88,9 @@ print('new_E,new_F ',new_F)
 n_loop = 0
 n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
-Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:]),np.linalg.norm(new_F)**2]
+Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:])**2,np.linalg.norm(new_F)**2]
 Real_loss_record = []
-while n_loop<5:
+while n_loop<3:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
