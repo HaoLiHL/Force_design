@@ -1631,7 +1631,7 @@ class GDMLTrain(object):
         
         
     
-    def inverse(self,task,trained_model,initial=0,c = 1, n_iter = 30,random_noise = 1e-2, step_size = 1e-12):
+    def inverse(self,task,trained_model,initial=0,c = 1, n_iter = 30,random_noise = 1e-2, step_size = 1e-3):
         
         sig_optim= trained_model['sig_optim']
         alphas_opt= trained_model['alphas_opt']
@@ -1678,7 +1678,7 @@ class GDMLTrain(object):
         #torch.mm(k_val_train,alpha_t)
         
         R_val_tensor.requires_grad_()
-        optimizer = torch.optim.Adam([R_val_tensor], lr=1e-3)
+        optimizer = torch.optim.Adam([R_val_tensor], lr=step_size)
         #optimizer = torch.optim.SGD([R_val_tensor], lr=1e-4, momentum=0.9)
         #step_size = 1e-12
         for index in range(n_iter):

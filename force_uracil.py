@@ -90,7 +90,7 @@ n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:]),np.linalg.norm(new_F)**2]
 Real_loss_record = []
-while n_loop<2:
+while n_loop<5:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
@@ -109,9 +109,9 @@ while n_loop<2:
     #candid_range = np.arange(10,30,10)
     #task['lam'] = 1e-10
     trained_model = AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
-    if n_loop == 1:
-        np.save('saved_model/task_uracil_1_iter.npy', task) 
-        np.save('saved_model/trained_model_uracil_1_iter.npy', trained_model) 
+    # if n_loop == 1:
+    #     np.save('saved_model/task_uracil_1_iter.npy', task) 
+    #     np.save('saved_model/trained_model_uracil_1_iter.npy', trained_model) 
         #AFF_train.train(task,sig_candid_F = candid_range)
     
     if np.linalg.norm(new_F)<=np.linalg.norm(task['F_train'][initial,:,:]):
@@ -120,7 +120,7 @@ while n_loop<2:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 50,random_noise = 1e-4,step_size = 1e-13)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 10,random_noise = 1e-4,step_size = 1e-3)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
