@@ -1631,7 +1631,7 @@ class GDMLTrain(object):
         
         
     
-    def inverse(self,task,trained_model,initial=0,c = 1, n_iter = 30,random_noise = 1e-2, step_size = 1e-3):
+    def inverse(self,task,trained_model,initial=0,c = 1, n_iter = 30,random_noise = 1e-2, step_size = 1e-3 ):
         
         sig_optim= trained_model['sig_optim']
         alphas_opt= trained_model['alphas_opt']
@@ -1692,8 +1692,8 @@ class GDMLTrain(object):
             
             #loss = torch.norm(F_predict)
             
-            # if index%20 == 1:
-            #     print(loss)
+            #if index%20 == 1:
+            #print(loss.item())
             
             #output = model(input)
             #loss = loss_fn(output, target)
