@@ -1599,7 +1599,9 @@ class GDMLTrain(object):
             R_val_tensor_ind_i = R_val_tensor[np.ix_(index_x,index_y)]
             
             
-            R_inv_rT = linear_operator.solve(R_ind_i, rhs= R_val_tensor_ind_i.T, lhs= R_val_tensor_ind_i)
+            #R_inv_rT = linear_operator.solve(R_ind_i, rhs= R_val_tensor_ind_i.T, lhs= R_val_tensor_ind_i)
+            u = torch.linalg.cholesky(R_ind_i)
+            R_inv_rT =  torch.mm(R_val_tensor_ind_i,torch.cholesky_solve(R_val_tensor_ind_i.T,u))
             #R_inv_rT = torch.mm ( torch.cholesky_inverse(u), R_val_tensor.t())
         
         # LU, pivots = torch.linalg.lu_factor(R)

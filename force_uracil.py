@@ -55,7 +55,7 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 task=np.load('saved_model/task_asp.npy',allow_pickle=True).item()
 trained_model=np.load('saved_model/trained_model_asp.npy',allow_pickle=True).item()
 
-
+trained_model['S2_optim']
 # # E_target = -17630
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 #print('target is',E_target)
@@ -63,7 +63,7 @@ print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(tas
 initial = 0
 print('start from',task["E_train"][initial])
 
-R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-10, n_iter = 50,random_noise = 1e-4)   
+R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 50,random_noise = 1e-4)   
 
 F_predict_pro = F_predict#.cpu().detach().numpy()
 R_target = R_proposed_tensor.cpu().detach().numpy()
@@ -120,7 +120,7 @@ while n_loop<3:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-10, n_iter = 100,random_noise = 1e-4,step_size = 1e-3)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-10, n_iter = 50,random_noise = 1e-4,step_size = 1e-3)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
