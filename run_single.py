@@ -153,6 +153,7 @@ ev_to_kcal = 1
 print("current real energy is ",new_E[0]*ev_to_kcal)
 print('new_E,new_F ',new_F)
 print( "real:", task['E_train'][0])
+print("real f loss:",np.linalg.norm(new_F)**2)
 
 AFF_E_inv.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
 # 
@@ -173,3 +174,4 @@ ev_to_kcal = 1
 print("current real energy is ",new_E[0]*ev_to_kcal)
 print('new_E,new_F ',new_F)
 print( "real:", task['E_train'][0])
+print("real f loss:",np.linalg.norm(new_F)**2)

@@ -36,7 +36,7 @@ dataset=np.load('./dataset/uracil_hao.npz')
 AFF_train = tensor_aff.GDMLTrain()
 
 print('---------uracil-----------200-1000-----------')
-n_train=200
+n_train=400
 #n_train=np.array([200,400,600,800,1000])
 #n_train=np.array([100])
 
@@ -63,7 +63,7 @@ print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(tas
 initial = 0
 print('start from',task["E_train"][initial])
 
-R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-10, n_iter = 50,random_noise = 5e-3)   
+R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-10, n_iter = 50,random_noise = 1e-4)   
 
 F_predict_pro = F_predict#.cpu().detach().numpy()
 R_target = R_proposed_tensor.cpu().detach().numpy()
@@ -90,7 +90,7 @@ n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:])**2,np.linalg.norm(new_F)**2]
 Real_loss_record = []
-while n_loop<10:
+while n_loop<3:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
@@ -105,7 +105,7 @@ while n_loop<10:
     #AFF_train=AFF.AFFTrain()
     #candid_range = np.exp(np.arange(-5,5,1))
     #candid_range = np.exp(np.arange(-2,2,1))
-    candid_range = np.arange(10,70,20)
+    candid_range = np.arange(11,30,10)
     #candid_range = np.arange(10,30,10)
     #task['lam'] = 1e-10
     trained_model = AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))

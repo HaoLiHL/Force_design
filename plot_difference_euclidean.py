@@ -82,18 +82,24 @@ import scipy.spatial
 import sklearn as sk
 from sklearn import metrics
 
+task=np.load('saved_model/task_sali.npy',allow_pickle=True).item()
+
 #a = scipy.spatial.distance.pdist(data, 'euclidean')
 opt = metrics.pairwise_distances(data)
 opt2 = metrics.pairwise_distances(data2)
 initlal = metrics.pairwise_distances(data_initial)
+initlal2 = metrics.pairwise_distances(task['R_train'][8,:,:])
 proposed = metrics.pairwise_distances(data_proposed)
+
+
+print(np.sum( (initlal - initlal2)**2))
 
 #import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
 import matplotlib.colors as plt_color
 fig = plt.figure() #调用figure创建一个绘图对象
 ax = fig.add_subplot(111)
-cax = ax.matshow(opt-proposed, cmap='bwr',vmin=-0.3, vmax=0.3)  #绘制热力图，从-1到1
+cax = ax.matshow(initlal-initlal2, cmap='bwr',vmin=-0.3, vmax=0.3)  #绘制热力图，从-1到1
 #cax = ax.matshow(opt-proposed, cmap='bwr',vmin=-0.3, vmax=0.3)  #绘制热力图，从-1到1
 
 #ax.axis('off')
