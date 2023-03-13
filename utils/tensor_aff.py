@@ -18,9 +18,9 @@ import warnings
 #os.chdir('/home/a510396/testl')
 os.chdir('./')
 #os.chdir('/Users/HL/Desktop/Study/SFM/AFF_code')
-os.environ["MKL_NUM_THREADS"] = '4'
-os.environ["NUMEXPR_NUM_THREADS"] = '4'
-os.environ["OMP_NUM_THREADS"] = '4'
+# os.environ["MKL_NUM_THREADS"] = '4'
+# os.environ["NUMEXPR_NUM_THREADS"] = '4'
+# os.environ["OMP_NUM_THREADS"] = '4'
 #os.chdir('/Users/HL/Desktop/Study/SFM')
 
 from utils import io
