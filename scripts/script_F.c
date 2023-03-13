@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 	fp1 = fopen(argv[1], "r");
 	fp2 = fopen(argv[2], "w+");
 
-	double gradient2force = -1.0*627.5/0.529177;
+	double gradient2force = -1.0*627.5096/0.529177;
 
 	int line_full_six = num_atom/6;
 	int reminder = num_atom - line_full_six*6;
