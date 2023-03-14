@@ -41,6 +41,7 @@ from scipy.stats import norm
 
 import torch
 import torch.nn as nn
+from torch.multiprocessing import Pool as tPool
 import linear_operator
 import subprocess
 import math
@@ -1681,17 +1682,24 @@ class GDMLTrain(object):
         
         R_val_tensor.requires_grad_()
         optimizer = torch.optim.Adam([R_val_tensor], lr=step_size)
-        #optimizer = torch.optim.SGD([R_val_tensor], lr=1e-4, momentum=0.9)
+        #optimizer = torch.optim.SGD([R_val_tensor], lr=step_size, momentum=0.9)
         #step_size = 1e-12
         for index in range(n_iter):
             optimizer.zero_grad()
             
+            #start = timeit.default_timer()
             k_val_train = self.torch_correlation_val_train(R_val_tensor, R_train_tensor, sig_optim,tril_perms_lin,index_diff_atom)
+            #stop = timeit.default_timer()
+            #print("torch_correlation_val_train takes",stop - start)
             R,c_star = self.correlation_matrix(R_val,task,sig_optim,tril_perms_lin,task['lam'])
             #F_predict = torch.mm(k_val_train,alpha_t)
             F_predict = self.predicted_F_tensor(k_val_train, alpha_t, task)
-            loss = self.loss(k_val_train, k_val_train,alpha_t,R,c_star,sigma_2_hat,F_predict,c,task)
             
+            #start = timeit.default_timer()
+            loss = self.loss(k_val_train, k_val_train,alpha_t,R,c_star,sigma_2_hat,F_predict,c,task)
+           # stop = timeit.default_timer()
+            
+           # print("loss takes",stop - start)
             #loss = torch.norm(F_predict)
             
             #if index%20 == 1:
@@ -2495,6 +2503,87 @@ class GDMLTrain(object):
         
         return -k
     
+    def tensor_correlation_ij_para(self, r_desc_i,r_d_desc_i,r_tensor_j, sig,tril_perms_lin,index_diff_atom):
+        """
+        Generate the correlation matrix tensor of x_i, and x_j
+        Parameters
+        ----------
+            r : 
+            
+        Returns
+        -------
+            correlation matrix 3N * 3N
+        """
+        
+        #r_tensor_j = R_train_tensor[j,:,:]
+        #r_tensor_j = torch.from_numpy(r_j).type(torch.float32)
+        r_desc_j,r_d_desc_j = self.tensor_from_r(r_tensor_j)
+        
+        dim_d = r_d_desc_i.shape[0]  # N*(N-1) /2 
+        n_atoms = int((1 + np.sqrt(8 * dim_d + 1)) / 2)
+        dim_i = 3 * n_atoms  # 36
+        
+        n_perms = int(len(tril_perms_lin) / dim_d)
+        
+        rj_d_desc = self.tensor_d_desc_from_comp(r_d_desc_j,n_atoms)[0]
+        ri_d_desc = self.tensor_d_desc_from_comp(r_d_desc_i,n_atoms)[0]
+        
+        rj_desc_perms = self.reshape_fortran(
+            torch.tile(r_desc_j, (n_perms,))[tril_perms_lin], (n_perms, -1)
+        )
+        
+        rj_d_desc_perms = torch.reshape(
+            torch.tile(rj_d_desc.T, (n_perms,))[:, tril_perms_lin], (-1, dim_d, n_perms)
+        )
+        
+        
+        mat52_base_div = 3 * sig ** 4
+        sqrt5 = np.sqrt(5.0)
+        sig_pow2 = sig ** 2
+        
+        diff_ab_perms = r_desc_i - rj_desc_perms
+        
+        norm_ab_perms = sqrt5 * torch.linalg.norm(diff_ab_perms, axis = 1)
+        
+        mat52_base_perms = torch.exp(-norm_ab_perms / sig) / mat52_base_div * 5
+        
+        diff_ab_outer_perms = torch.einsum('ki,kj->ij',
+                                           diff_ab_perms * mat52_base_perms[:, None] * 5,
+                                           torch.einsum('ki,jik -> kj', diff_ab_perms, rj_d_desc_perms)
+                                           )
+        diff_ab_outer_perms -= torch.einsum(
+            'ikj,j->ki',
+            rj_d_desc_perms,
+            (sig_pow2 + sig * norm_ab_perms) * mat52_base_perms,
+        )
+        
+        
+        #desc_func.d_desc_from_comp(R_d_desc_val[i, :, :], out=ri_d_desc)
+
+        #K[blk_i, blk_j] = ri_d_desc[0].T.dot(diff_ab_outer_perms)
+        #k = torch.mm(torch.t(ri_d_desc), diff_ab_outer_perms)
+        
+        n_type=len(index_diff_atom)
+        
+        if(n_atoms<=12):
+            k = torch.mm(torch.t(ri_d_desc), diff_ab_outer_perms)
+        else:
+            k = torch.empty((n_atoms*3,3*n_atoms), dtype=torch.float64)
+            #k1 = np.empty((3,3))
+            for l in range(0, n_type):
+                lenl=len(index_diff_atom[l])
+                
+                #out = torch.empty((n_atom*3,3*n_train*n_atom), dtype=torch.float64)
+                index = torch.tile(torch.arange(3),(lenl,))+3*torch.repeat_interleave(torch.tensor(index_diff_atom[l]),3)
+                
+               
+                
+                #index = np.arange(3)+3*l
+
+                k[np.ix_(index,index)] = torch.mm(torch.t(ri_d_desc)[index,:], diff_ab_outer_perms[:,index])
+                #k[np.ix_(index,index)]=k1.copy()
+        
+        return -k
     def torch_correlation_val_train(self,R_val_tensor, R_train_tensor, sig,tril_perms_lin,index_diff_atom):
         """
         Return the correlation tensor matrix of R_val with R_train 
@@ -2525,6 +2614,33 @@ class GDMLTrain(object):
         r_tensor_i = R_val_tensor
         r_desc_i,r_d_desc_i = self.tensor_from_r(r_tensor_i)
         
+        from multiprocessing import freeze_support
+        #freeze_support()
+    
+        
+        
+        # Define the number of processes to run in parallel
+        # num_processes = torch.multiprocessing.cpu_count()
+        
+        # # Create a pool of processes
+        # pool = tPool(num_processes)
+        
+        # # Initialize an empty output tensor
+        # #output_data = torch.empty(input_data.shape, dtype=input_data.dtype)
+        
+        # # Run the worker_function in parallel on the input_data
+        # input_data = [(r_desc_i,r_d_desc_i,R_train_tensor[j,:,:],sig,tril_perms_lin,index_diff_atom) for j in range(n_train)]
+        
+        
+        # for j, result in enumerate(pool.imap_unordered(self.tensor_correlation_ij_para, input_data)):
+        #     print(f"Processing index {j}")
+        #     out[0:(n_atom*3),(j*dim):((j+1)*dim)] = result
+        
+        # # Close the pool of processes
+        # pool.close()
+        # pool.join()
+            
+        
         for j in range(n_train):
         
             r_tensor_j = R_train_tensor[j,:,:]
@@ -2532,7 +2648,7 @@ class GDMLTrain(object):
             r_desc_j,r_d_desc_j = self.tensor_from_r(r_tensor_j)
             
             out[0:(n_atom*3),(j*dim):((j+1)*dim)] = self.tensor_correlation_ij(r_desc_i,r_d_desc_i,r_desc_j,r_d_desc_j, sig,tril_perms_lin,index_diff_atom)
-        
+       
         return out
     
     def _assemble_kernel_KEE_mat(

@@ -53,7 +53,7 @@ trained_model=np.load('saved_model/trained_model_asp400.npy',allow_pickle=True).
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 #print('target is',E_target)
    
-initial = 0
+initial = 100
 print('start from',task["E_train"][initial])
 
 R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-10, n_iter = 100,random_noise = 1e-4,step_size = 1e-3)   
@@ -109,7 +109,7 @@ while n_loop<10:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-10, n_iter = 100,random_noise = 1e-4, step_size = 1e-3)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-10, n_iter = 200,random_noise = 1e-4, step_size = 3e-3)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
@@ -147,6 +147,7 @@ while n_loop<10:
     print("current real energy is ",new_E,'\n')
     print("current real F loss is ",np.linalg.norm(new_F)**2,'\n')
     print('current real force ',new_F,'\n')
+    print('REAL F loss Record', Real_F_loss_record) 
 
     #print('new_E,new_F ',new_F)
 n_train = task['R_train'].shape[0]
