@@ -55,9 +55,9 @@ print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(tas
 initial = 0
 print('start from',task["E_train"][initial])
 
-R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-5, n_iter = 200)   
+R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-1, n_iter = 50, step_size= 1e-2)   
 
-#F_predict_pro = F_predict#.cpu().detach().numpy()
+F_predict_pro = F_predict#.cpu().detach().numpy()
 R_target = R_proposed_tensor.cpu().detach().numpy()
 
 tensor_aff.compile_scirpts_for_physics_based_calculation_IO(task['R_train'])
@@ -108,7 +108,7 @@ while n_loop<10:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200,random_noise = 1e-4)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-1, n_iter = 100,random_noise = 1e-4,step_size=1e-2)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
