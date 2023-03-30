@@ -53,7 +53,7 @@ trained_model=np.load('saved_model/trained_model_h2_long.npy',allow_pickle=True)
 print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(task['E_train'])[0]))
 #print('target is',E_target)
    
-initial = 100
+initial = 150
 print('start from',task["E_train"][initial])
 
 R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-7, n_iter = 250, step_size= 1e-3)   
@@ -83,7 +83,7 @@ n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:]),np.linalg.norm(new_F)**2]
 Real_loss_record = []
-while n_loop<10:
+while n_loop<4:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
