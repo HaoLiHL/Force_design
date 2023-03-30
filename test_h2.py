@@ -19,8 +19,8 @@ n_train=400
 print(' The N_train is '+repr(n_train)+'--------------------')
 
 
-task=np.load('saved_model/task_sali.npy',allow_pickle=True).item()
-trained_model = np.load('saved_model/trained_model_sali.npy',allow_pickle=True).item()
+task=np.load('saved_model/task_h2_long.npy',allow_pickle=True).item()
+trained_model = np.load('saved_model/trained_model_h2_long.npy',allow_pickle=True).item()
 
 # task=np.load('saved_model/task_asp.npy',allow_pickle=True).item()
 # trained_model = np.load('saved_model/trained_model_asp.npy',allow_pickle=True).item()
