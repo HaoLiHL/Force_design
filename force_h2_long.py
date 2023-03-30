@@ -98,7 +98,7 @@ while n_loop<5:
     #AFF_train=AFF.AFFTrain()
     #candid_range = np.exp(np.arange(-5,5,1))
     #candid_range = np.exp(np.arange(-2,2,1))
-    candid_range = np.arange(10,20,5)
+    candid_range =  np.arange(1,70,10)
     #task['lam'] = 1e-10
     trained_model = AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
     #AFF_train.train(task,sig_candid_F = candid_range)
