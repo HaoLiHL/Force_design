@@ -45,8 +45,8 @@ print(' The N_train is '+repr(n_train)+'--------------------')
 # np.save('saved_model/trained_model_h2_long.npy', trained_model) 
 
 
-task=np.load('saved_model/task_sali200.npy',allow_pickle=True).item()
-trained_model=np.load('saved_model/trained_model_sali200.npy',allow_pickle=True).item()
+task=np.load('saved_model/task_h2_long.npy',allow_pickle=True).item()
+trained_model=np.load('saved_model/trained_model_h2_long.npy',allow_pickle=True).item()
 
 
 # E_target = -17630
@@ -109,7 +109,7 @@ while n_loop<10:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 100,random_noise = 1e-4,step_size=1e-2)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 100,random_noise = 1e-4,step_size=1e-3)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
