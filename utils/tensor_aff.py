@@ -1634,7 +1634,7 @@ class GDMLTrain(object):
         
         
     
-    def inverse(self,task,trained_model,initial=0,c = 1, n_iter = 30,random_noise = 1e-2, step_size = 1e-3 ):
+    def inverse(self,task,trained_model,initial=0,c = 1, n_iter = 30,random_noise = 1e-2, step_size = 1e-3 , third_term = False):
         
         sig_optim= trained_model['sig_optim']
         alphas_opt= trained_model['alphas_opt']
@@ -1670,6 +1670,8 @@ class GDMLTrain(object):
         
         k_val_train = self.torch_correlation_val_train(R_val_tensor, R_train_tensor, sig_optim,tril_perms_lin,index_diff_atom)
         
+        if third_term:
+            D_initial, D_unimportant = self.tensor_from_r(R_val_tensor)
         
         n_type=task['n_type']
         alpha_t = []
@@ -1697,6 +1699,14 @@ class GDMLTrain(object):
             
             #start = timeit.default_timer()
             loss = self.loss(k_val_train, k_val_train,alpha_t,R,c_star,sigma_2_hat,F_predict,c,task)
+            
+            # add third part 
+            if third_term:
+                D_now, unimportant = self.tensor_from_r(R_val_tensor)
+                
+                loss += torch.norm(D_now - D_initial)**2 
+            
+            
            # stop = timeit.default_timer()
             
            # print("loss takes",stop - start)

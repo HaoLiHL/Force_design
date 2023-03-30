@@ -16,8 +16,28 @@ from utils import perm
 from utils.desc import Desc
 
 #task = np.load('/Users/HL/Desktop/Study/SFM/proposed_R_salic.npy',allow_pickle=True).item()
-task = np.load('/Users/HL/Desktop/Study/SFM/proposed_R_asp.npy',allow_pickle=True).item()
-R = task['R_train']
+#task = np.load('/Users/HL/Desktop/Study/SFM/proposed_R_asp.npy',allow_pickle=True).item()
+task=np.load('/Users/HL/Documents/GitHub/Force_design/saved_model/task_sali.npy',allow_pickle=True).item()
+
+R = task['R_train'][0:10,:,:]
+
+data_proposed = np.array([[-1.80679, 2.7824, -0.0121526],
+                 [-2.49502, 1.56503, -0.0111459],
+                 [-1.79752, 0.33387, -0.0111768],
+                 [-0.403997, 0.339724, -0.0123445],
+                 [0.317446, 1.56223, -0.0134477],
+                 [-0.394867, 2.79846, -0.0132553],
+                 [1.77367, 1.56683, -0.0148935],
+                 [0.244276, 4.01262, -0.0141552],
+                 [1.24339, 3.84217, -0.0148837],
+                 [2.33889, 0.303113, -0.0153897],
+                 [3.32679, 0.358603, -0.0164426],
+                 [2.49528, 2.61165, -0.0157335],
+                 [-2.33383, 3.73788, -0.0121251],
+                 [-3.58881, 1.56657, -0.0103269],
+                 [-2.3415, -0.613527, -0.0103224],
+                 [0.162941, -0.593149, -0.0124449]])
+
 
 # R_test = np.array([-6.4300901476,	7.2331696223,	-0.5911664542,
 # -5.9715435892,	8.555565608,	-0.5610225352,
@@ -41,7 +61,7 @@ R = task['R_train']
 # -5.5049187571,	3.7717220042,	-1.4729343509,
 # -7.7189163082,	3.7623559803,	-0.7493333001]).reshape(1,21,3)
 
-# R_new = np.append(R,R_test).reshape(R.shape[0]+1,21,-1)
+R_new = np.append(R,data_proposed).reshape(R.shape[0]+1,16,-1)
 
 desc = Desc(
         R.shape[1],
@@ -49,7 +69,7 @@ desc = Desc(
         max_processes=None,
     )
 
-R_desc_atom, R_d_desc_atom = desc.from_R(R,lat_and_inv=None,
+R_desc_atom, R_d_desc_atom = desc.from_R(R_new,lat_and_inv=None,
                 callback=None)
 
 n_molecule = R_desc_atom.shape[0]
@@ -81,5 +101,5 @@ ax.set_title("Aspirin euclidean: distance between training and proposed")
 
 
 fig.tight_layout()
-fig.savefig('/Users/HL/Desktop/Study/SFM/inverse_force/euclidean_distance_Salicylic.png', format='png',bbox_inches = 'tight',dpi=600,pad_inches = 0.2)
+#fig.savefig('/Users/HL/Desktop/Study/SFM/inverse_force/euclidean_distance_Salicylic.png', format='png',bbox_inches = 'tight',dpi=600,pad_inches = 0.2)
 plt.show()
