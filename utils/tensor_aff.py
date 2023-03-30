@@ -1202,7 +1202,7 @@ class GDMLTrain(object):
             callback=None):
         
         sig_optim= trained_model['sig_optim']
-        sig_candid1_opt= trained_model['sig_candid1_opt']
+        #sig_candid1_opt= trained_model['sig_candid1_opt']
         alphas_opt= trained_model['alphas_opt']
         kernel_time_ave= trained_model['kernel_time_ave']
         
@@ -1384,15 +1384,93 @@ class GDMLTrain(object):
         #ae=np.mean(np.abs(F_hat_val_F-F_val_atom))
         MAE=ae
         
-        if task['use_E_cstr']:
-            lam_f=task['lam']
-            lam_e=task['lam']
-            print('   Starting training for energy:    ') 
-            MSA_E_arr=[]
-            start = timeit.default_timer()
+         
         
-                #print('This is '+repr(i)+'th task: sigma='+repr(sig_candid[i]))
-            F_hat_val_E_ave,E_L,E_H=self._assemble_kernel_mat_Energy(
+       
+        return MAE
+    
+    def predict(self, task,trained_model,new_molecule,
+            cprsn_callback=None,
+            save_progr_callback=None,  # TODO: document me
+            callback=None):
+        
+        sig_optim= trained_model['sig_optim']
+        #sig_candid1_opt= trained_model['sig_candid1_opt']
+        alphas_opt= trained_model['alphas_opt']
+        kernel_time_ave= trained_model['kernel_time_ave']
+        
+        task = dict(task)
+        solver = task['solver_name']
+        batch_size=task['batch_size']
+        n_train, n_atoms = task['R_train'].shape[:2]
+        n_val, n_atoms = new_molecule.shape[:2]
+        desc = Desc(
+                n_atoms,
+                interact_cut_off=task['interact_cut_off'],
+                max_processes=None,
+            )
+        n_perms = task['perms'].shape[0]  # 12 on benzene
+        tril_perms = np.array([desc.perm(p) for p in task['perms']])
+
+        #tril_pos=task['perms']
+        index_diff_atom = task['index_diff_atom']
+        # tril_perms stores the 12 permutations on the 66 descriptor
+        dim_i = 3 * n_atoms #36
+        dim_d = desc.dim  #66 on benzene
+        perm_offsets = np.arange(n_perms)[:, None] * dim_d
+        # perm_offsets a [12,1] matrix stores the [0, 66, 66*2, ..., 12*66]
+        tril_perms_lin = (tril_perms + perm_offsets).flatten('F')
+        
+          # tril_perms_lin stores a vectorized permuations of all 12 permuations' descriptor position
+        n_type=task['n_type']
+        
+        lat_and_inv = None
+        R = task['R_train']  #.reshape(n_train, -1) 
+        
+        R_val=new_molecule #.reshape(n_val,-1)
+        # R is a n_train * 36 matrix 
+        tril_perms_lin_mirror = tril_perms_lin
+        # tril_perms_lin stores a vectorized permuations of all 12 permuations' descriptor position
+        
+        R_atom=R
+        R_val_atom=R_val
+        #R_mirror=
+        R_desc_atom, R_d_desc_atom = desc.from_R(R_atom,lat_and_inv=lat_and_inv,
+                callback=None)
+        
+        R_desc_val_atom, R_d_desc_val_atom = desc.from_R(R_val_atom,lat_and_inv=lat_and_inv,
+                callback=None)
+        F_train_atom=[]
+        # if task['use_E_cstr']:
+        #     #F_train_atom=np.empty((int(n_train*(n_atoms/n_type*3+1)),n_type))
+            
+        # else:
+        #     F_train_atom=np.empty((int(n_train*n_atoms/n_type*3),n_type))
+        F_val_atom=[]
+            #F_val_atom=task['F_val'].ravel().copy()
+        
+        E_train = task['E_train'].ravel().copy()
+        #E_val = task['E_test'].ravel().copy()
+        uncertainty=task['uncertainty']
+        
+        for i in range(n_type):
+            index=np.array(index_diff_atom[i])
+
+            F_train_atom.append(task['F_train'][:,index,:].reshape(int(n_train*(len(index_diff_atom[i])*3)),order='C'))
+            #F_val_atom.append(task['F_test'][:,index,:].reshape(int(n_val*(len(index_diff_atom[i])*3)),order='C'))
+        #ye_val=E_val
+        
+        #y_atom= F_train_atom.copy()
+            
+            
+        print('This is tesing task : sigma='+repr(sig_optim))
+        alphas=alphas_opt
+        
+
+        F_hat_val_F=[]
+        #F_hat_val_E=[]
+
+        K_r_all = self._assemble_kernel_mat_test(
                 index_diff_atom,
                 R_desc_atom,
                 R_d_desc_atom,
@@ -1400,37 +1478,43 @@ class GDMLTrain(object):
                 R_d_desc_val_atom,
                 tril_perms_lin,
                 tril_perms_lin_mirror,
-                sig_candid1_opt,
-                lam_e,
-                lam_f,
-                batch_size,
+                sig_optim,
                 desc,
-                F_star,#F_star_opt,
-                E_train,
-                uncertainty,
-                use_E_cstr=task['use_E_cstr'],
+                use_E_cstr=False,
                 col_idxs= np.s_[:],
                 callback=None,
             )
-            stop = timeit.default_timer()
-            dur_s = (stop - start)
-            MSA_E=np.mean(np.abs(-F_hat_val_E_ave-ye_val))
-            RMSE_E=np.sqrt(np.mean((-F_hat_val_E_ave-ye_val)**2))/np.std(ye_val)
-            MSA_E_arr.append(MSA_E)
-            print(' *** Overall training time on E:'+repr(dur_s+kernel_time_ave)+'second; each estimation takes'+repr(dur_s/n_val)+' seconds') 
-            print(' This is the testing task: MAE of E='+repr(MSA_E)) 
-            print(' This is the testing task: RMSE /stdof E='+repr(RMSE_E)) 
-            print(' This is the testing task: RMSE of E='+repr(np.sqrt(np.mean((-F_hat_val_E_ave-ye_val)**2)))) 
-            if uncertainty: 
-                P_C=np.sum( np.array((E_L)<=(-ye_val)) & np.array((E_H)>=(-ye_val)))/(n_val)
-                A_L=np.mean( (E_H)-(E_L))
-                print(' Energy: The percentage of coverage  by 95% CI is '+repr(P_C*100)+' %.') 
-                print(' Energy: The average length of the 95% CI is '+repr(A_L)) 
-       
+        
+        
+
+            
+        
+        F_star=np.empty([n_val*3*n_atoms])
+        
+        for ind_i in range(n_type):
+            index_eg=np.tile(np.arange(3),len(index_diff_atom[ind_i]))+3*np.repeat(index_diff_atom[ind_i],3)
+
+
+                
+            index_x=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
+            index_y=np.repeat(np.arange(n_train)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_train)
+
+ 
+            K_r=K_r_all[np.ix_(index_x,index_y)]
+            F_hat_val_i=np.matmul(K_r,np.array(alphas[ind_i]))
+            index_i=np.repeat(np.arange(n_val)*(dim_i),3*len(index_diff_atom[ind_i]))+np.tile(index_eg,n_val)
+
+
+            F_hat_val_F.append(F_hat_val_i)
+            F_star[index_i]=F_hat_val_i
+            
+                    #a=(np.concatenate(F_star_L)<=np.concatenate(F_val_atom) and np.concatenate(F_star_H)>=np.concatenate(F_val_atom))
+               
+              
         
         
        
-        return MAE
+        return F_star
     
     def correlation_matrix(self,R_val,task,sig,tril_perms_lin,lam):
         
