@@ -61,7 +61,7 @@ initial_position =  np.array([[0.6493005159, 0.3335238106, -0.0001173225],
                 [1.2202008073, -0.9870460045, 0.0009573408],
                 [0.0973857531, -1.0090107149, -0.0011697607]])
 
-R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-3, n_iter = 50, step_size= 1e-3)   
+R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-5, n_iter = 30, step_size= 1e-3)   
 
 F_predict_pro = F_predict#.cpu().detach().numpy()
 R_target = R_proposed_tensor.cpu().detach().numpy()
@@ -114,7 +114,7 @@ while n_loop<5:
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-3, n_iter = 100,random_noise = 1e-4,step_size=1e-3)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-5, n_iter = 100,random_noise = 1e-4,step_size=1e-3)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   
