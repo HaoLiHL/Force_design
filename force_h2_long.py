@@ -56,7 +56,12 @@ print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(tas
 initial = 150
 print('start from',task["E_train"][initial])
 
-R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=0, c = 1e-7, n_iter = 250, step_size= 1e-3)   
+initial_position =  np.array([[0.6493005159, 0.3335238106, -0.0001173225],
+                [-0.6516737070, -0.0006357680, 0.0001145444],
+                [1.2202008073, -0.9870460045, 0.0009573408],
+                [0.0973857531, -1.0090107149, -0.0011697607]])
+
+R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-7, n_iter = 250, step_size= 1e-3)   
 
 F_predict_pro = F_predict#.cpu().detach().numpy()
 R_target = R_proposed_tensor.cpu().detach().numpy()
@@ -83,7 +88,7 @@ n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:]),np.linalg.norm(new_F)**2]
 Real_loss_record = []
-while n_loop<4:
+while n_loop<3:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
@@ -104,12 +109,12 @@ while n_loop<4:
     #AFF_train.train(task,sig_candid_F = candid_range)
     
     if np.linalg.norm(new_F)<=np.linalg.norm(task['F_train'][initial,:,:]):
-        initial=n_train
+        initial_position=R_target
     print('initial is ', initial)
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
        
-    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial=initial, c = 1e-7, n_iter = 100,random_noise = 1e-4,step_size=3e-4)   
+    R_design_tensor,F_predict=AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-7, n_iter = 100,random_noise = 1e-4,step_size=3e-4)   
 
     #AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-1,c=10,num_step = 30,random_val = 1e-2)
     #R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial=initial, c = 1e-5, n_iter = 200)   

@@ -99,3 +99,39 @@ new = np.concatenate((task['R_test'][0,:,:][None], new1), axis=0)
 result = AFF_train.predict(task,trained_model,new)
 print(result)
 #result = AFF_train.test(task,trained_model)
+
+
+
+
+#---------------plot the R_target------------------------------
+R_target =  np.array([[0.6493005159, 0.3335238106, -0.0001173225],
+                [-0.6516737070, -0.0006357680, 0.0001145444],
+                [1.2202008073, -0.9870460045, 0.0009573408],
+                [0.0973857531, -1.0090107149, -0.0011697607]])
+
+R_proposed = np.array([[-2.94802, 2.13117, 0.04401],
+                [-1.73085, 2.05327, 0.10708],
+                [-3.43108, 3.01653, -0.36069],
+                [-1.16949, 2.77829, -0.20195]])
+
+import plotly.graph_objects as go
+import numpy as np
+#import plotly.graph_objects as go
+import plotly.io as pio
+#pio.renderers.default = 'svg'  # change it back to spyder
+pio.renderers.default = 'browser'
+
+# Helix equation
+#t = np.linspace(0, 10, 50)
+R_target1 = R_proposed[None]
+x, y, z = R_target1[0,:,0],R_target1[0,:,1],R_target1[0,:,2]
+
+fig = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z,
+                                  mode='markers')])
+fig.show()
+
+
+
+
+
+
