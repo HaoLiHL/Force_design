@@ -56,10 +56,18 @@ print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(tas
 initial = 150
 print('start from',task["E_train"][initial])
 
-initial_position =  np.array([[0.6493005159, 0.3335238106, -0.0001173225],
-                [-0.6516737070, -0.0006357680, 0.0001145444],
-                [1.2202008073, -0.9870460045, 0.0009573408],
-                [0.0973857531, -1.0090107149, -0.0011697607]])
+
+# this one freq = 2
+initial_position =  np.array([[ 0.62296138, -0.51916103, -0.01964953],
+       [-0.49433722,  0.08627029, -0.79764296],
+       [ 1.6632841 , -0.88922841, -0.02380747],
+       [-0.20417143, -0.72422711,  0.3661379 ]])
+# np.array([[0.6493005159, 0.3335238106, -0.0001173225],
+#                 [-0.6516737070, -0.0006357680, 0.0001145444],
+#                 [1.2202008073, -0.9870460045, 0.0009573408],
+#                 [0.0973857531, -1.0090107149, -0.0011697607]])
+
+
 
 R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-5, n_iter = 30, step_size= 1e-3)   
 
@@ -86,9 +94,9 @@ print('new_E,new_F ',new_F)
 n_loop = 0
 n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
-Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:]),np.linalg.norm(new_F)**2]
+Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:])**2,np.linalg.norm(new_F)**2]
 Real_loss_record = []
-while n_loop<20:
+while n_loop<5:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
