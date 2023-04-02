@@ -69,7 +69,7 @@ initial_position =  np.array([[ 0.62296138, -0.51916103, -0.01964953],
 
 
 
-R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-3, n_iter = 50, step_size= 3e-3)   
+R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-3, n_iter = 50, step_size= 1e-2)   
 
 F_predict_pro = F_predict#.cpu().detach().numpy()
 R_target = R_proposed_tensor.cpu().detach().numpy()
@@ -81,7 +81,7 @@ atomic_number = dataset['z']
 
 computational_method = ['PBE', 'PBE', '6-31G']
 new_E, new_F = tensor_aff.run_physics_baed_calculation(R_target[None], atomic_number, computational_method)
-
+old_F = np.inf
 
 ev_to_kcal = 1
 #print(np.array(new_F).shape)
@@ -116,8 +116,9 @@ while n_loop<5:
     trained_model = AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
     #AFF_train.train(task,sig_candid_F = candid_range)
     
-    if np.linalg.norm(new_F)<=np.linalg.norm(task['F_train'][initial,:,:]):
+    if np.linalg.norm(new_F)<=np.linalg.norm(old_F):
         initial_position=R_target
+        old_F = new_F
     print('initial is ', initial)
     #initial=n_train
     #Record=AFF_train.inverseE_new( task,trained_model,E_target,ind_initial=initial,tol_MAE=0.01,lr=1e-3,c=0.01,num_step = 15)
