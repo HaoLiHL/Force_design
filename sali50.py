@@ -53,7 +53,7 @@ print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(tas
 #print('target is',E_target)
    
 initial = 0
-initial_position = task['F_train'][initial,:,:]
+initial_position = task['R_train'][initial,:,:]
 print('start from',task["E_train"][initial])
 
 R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-2, n_iter = 20, step_size= 1e-2)   
