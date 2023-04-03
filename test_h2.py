@@ -12,7 +12,7 @@ dataset=np.load('./dataset/h2_long.npz')
 AFF_train = AFF_E_inv.AFFTrain()
 
 print('---------uracil-----------200-1000-----------')
-n_train=400
+n_train=200
 #n_train=np.array([200,400,600,800,1000])
 #n_train=np.array([100])
 
