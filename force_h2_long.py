@@ -22,7 +22,7 @@ from utils import tensor_aff
 #dataset=np.load('benzene_old_dft.npz')
 #dataset=np.load('uracil_dft.npz')
 #dataset=np.load('./dataset/h2c0_hao.npz')
-dataset=np.load('./dataset/h2_ts2.npz')
+dataset=np.load('./dataset/h2_ts3.npz')
 
 #dataset=np.load('H2CO_mu.npz')
 
@@ -31,15 +31,15 @@ dataset=np.load('./dataset/h2_ts2.npz')
 AFF_train = tensor_aff.GDMLTrain()
 
 print('---------uracil-----------200-1000-----------')
-n_train=400
+n_train=200
 #n_train=np.array([200,400,600,800,1000])
 #n_train=np.array([100])
 
 print(' The N_train is '+repr(n_train)+'--------------------')
 
 
-#candid_range = np.exp(np.arange(-3,7,1))
-candid_range = np.arange(0.1,10,2)
+candid_range = np.exp(np.arange(3,10,1))
+#candid_range = np.arange(0.1,10,2)
 task=AFF_train.create_task(dataset,n_train,dataset,50,20,100,1e-12)
 # #candid_range = np.exp(np.arange(-2,5,1))
 trained_model= AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
