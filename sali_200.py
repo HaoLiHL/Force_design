@@ -122,7 +122,7 @@ while n_loop<2:
     trained_model = AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
     #AFF_train.train(task,sig_candid_F = candid_range)
     
-    if np.linalg.norm(new_F)<=np.linalg.norm(task['F_train'][initial,:,:]):
+    if np.linalg.norm(new_F)<=np.linalg.norm(old_F):
         initial=n_train
         initial_position = R_target
         old_F = new_F
