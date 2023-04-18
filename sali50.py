@@ -53,7 +53,24 @@ print("max energy is "+str(max(task['E_train'])[0])+'min energy is '+str(min(tas
 #print('target is',E_target)
    
 initial = 10
-initial_position = task['R_train'][initial,:,:]
+initial_position = np.array([[-1.843376345456423, 2.8294932215287116, -0.01622855304226896],
+                [-2.544906784610215, 1.5585182784961846, 0.09307981921375645],
+                [-1.7794574659569309, 0.3912049696336026, 0.06233784357385165],
+                [-0.3481335872889513, 0.2025357079913076, 0.16458879372347054],
+                [0.0038257905490962085, 1.520389262637608, -0.17198237234171462],
+                [-0.3995710293613946, 2.550976515218652, 0.12582220379395642],
+                [1.6758854576297693, 1.6375102983696697, -0.02727739766052799],
+                [0.11632659401341171, 3.980990347815039, 0.02081784153651932],
+                [1.3938100568195515, 4.2920597317453995, 0.17320720158723465],
+                [2.298950987328381, 0.4193423319770672, -0.07363919824452603],
+                [3.377872377845014, 0.19338411524454063, -0.05440255047341536],
+                [2.612436490449355, 0.336259860646772, 0.023637793301325295],
+                [-2.1441253348196567, 3.640971992242205, -0.07275576937647563],
+                [-3.6688240006247925, 1.5929112557955432, 0.12030321099092159],
+                [-2.240263701129696, -0.5506339077244986, 0.17399340122796053],
+                [0.00045691230936797, -0.6822500682045702, 0.08321190183200469]])
+
+# task['R_train'][initial,:,:]
 print('start from',task["E_train"][initial])
 
 R_proposed_tensor,F_predict = AFF_train.inverse(task,trained_model,initial_position=initial_position, c = 1e-2, n_iter = 20, step_size= 1e-2)   
@@ -83,7 +100,7 @@ n_atom = task['R_train'].shape[1]
 Real_E_record = [task["E_train"][initial][0],new_E[0]*ev_to_kcal]
 Real_F_loss_record = [np.linalg.norm(task["F_train"][initial,:,:]),np.linalg.norm(new_F)**2]
 Real_loss_record = []
-while n_loop<40:
+while n_loop<3:
     
     n_loop += 1
     print('The '+repr(n_loop)+'-th loop \n')
@@ -103,7 +120,7 @@ while n_loop<40:
     trained_model = AFF_train.train(task,candid_range,np.arange(0.1,1,0.1))
     #AFF_train.train(task,sig_candid_F = candid_range)
     
-    if np.linalg.norm(new_F)<=np.linalg.norm(task['F_train'][initial,:,:]):
+    if np.linalg.norm(new_F)<=np.linalg.norm(old_F):
         initial=n_train
         initial_position = R_target
         old_F = new_F
